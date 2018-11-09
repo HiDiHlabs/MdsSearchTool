@@ -1,0 +1,48 @@
+/*
+ * Copyright (c) 2018. dkfz
+ *
+ * Distributed under the MIT License (license terms are at https://github.com/eilslabs/MdsSearchTool/blob/master/LICENSE).
+ *
+ *
+ */
+
+/* content */
+article {
+    width: 640px;
+    float: left;
+    font-size: 12px;
+}
+h1 {
+    font-size: 32px;
+    padding-bottom: 4px;
+    border-bottom: #000 solid 1px;
+    text-transform: uppercase;
+}
+h2 {
+    font-size: 16px;
+    padding-bottom: 2px;
+    border-bottom: #000 solid 1px;
+}
+article p:first-of-type {
+    font-weight: bold;
+    font-size: 14px;
+}
+article p:last-child {
+    padding-bottom: 8px;
+    border-bottom: #000 solid 1px;
+}
+aside {
+    width: 310px;
+    padding: 60px 5px;
+    float: left;
+}
+.logos {
+    width: 960px;
+    font-size: 11px;
+}
+.logos h2 {
+    font-size: 11px;
+    width: 100%;
+    padding-bottom: 4px;
+    border-bottom: #000 solid 1px;
+}

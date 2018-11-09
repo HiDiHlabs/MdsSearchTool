@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<!--
+  ~ Copyright (c) 2018. dkfz
+  ~
+  ~ Distributed under the MIT License (license terms are at https://github.com/eilslabs/MdsSearchTool/blob/master/LICENSE).
+  ~
+  ~
+  -->
+
+<ns5:Query xmlns:ns5="http://schema.samply.de/ccp/Query" xmlns:ns2="http://schema.samply.de/ccp/MdrKey" xmlns:ns4="http://schema.samply.de/ccp/Attribute" xmlns:ns3="http://schema.samply.de/ccp/Value"><ns5:Where><ns5:And><ns5:And><ns5:And><ns5:Geq><ns4:Attribute><ns2:MdrKey>urn:dktk:dataelement:83:3</ns2:MdrKey><ns3:Value>1388530800000</ns3:Value></ns4:Attribute></ns5:Geq><ns5:Leq><ns4:Attribute><ns2:MdrKey>urn:dktk:dataelement:83:3</ns2:MdrKey><ns3:Value>1419980400000</ns3:Value></ns4:Attribute></ns5:Leq></ns5:And><ns5:Eq><ns4:Attribute><ns2:MdrKey>urn:dktk:dataelement:36:2</ns2:MdrKey><ns3:Value>t</ns3:Value></ns4:Attribute></ns5:Eq></ns5:And><ns5:And><ns5:Or><ns5:Eq><ns4:Attribute><ns2:MdrKey>urn:dktk:dataelement:29:2</ns2:MdrKey><ns3:Value>C32.3</ns3:Value></ns4:Attribute></ns5:Eq><ns5:Eq><ns4:Attribute><ns2:MdrKey>urn:dktk:dataelement:29:2</ns2:MdrKey><ns3:Value>C32.8</ns3:Value></ns4:Attribute></ns5:Eq><ns5:Eq><ns4:Attribute><ns2:MdrKey>urn:dktk:dataelement:29:2</ns2:MdrKey><ns3:Value>C32.9</ns3:Value></ns4:Attribute></ns5:Eq></ns5:Or><ns5:Or><ns5:Eq><ns4:Attribute><ns2:MdrKey>urn:dktk:dataelement:7:2</ns2:MdrKey><ns3:Value>8050/3</ns3:Value></ns4:Attribute></ns5:Eq><ns5:Eq><ns4:Attribute><ns2:MdrKey>urn:dktk:dataelement:7:2</ns2:MdrKey><ns3:Value>8052/3</ns3:Value></ns4:Attribute></ns5:Eq><ns5:Eq><ns4:Attribute><ns2:MdrKey>urn:dktk:dataelement:7:2</ns2:MdrKey><ns3:Value>8070/3</ns3:Value></ns4:Attribute></ns5:Eq><ns5:Eq><ns4:Attribute><ns2:MdrKey>urn:dktk:dataelement:7:2</ns2:MdrKey><ns3:Value>8071/3</ns3:Value></ns4:Attribute></ns5:Eq><ns5:Eq><ns4:Attribute><ns2:MdrKey>urn:dktk:dataelement:7:2</ns2:MdrKey><ns3:Value>8072/3</ns3:Value></ns4:Attribute></ns5:Eq></ns5:Or></ns5:And></ns5:And></ns5:Where></ns5:Query>

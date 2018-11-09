@@ -1,0 +1,61 @@
+/*
+ * Copyright (c) 2018. dkfz
+ *
+ * Distributed under the MIT License (license terms are at https://github.com/eilslabs/MdsSearchTool/blob/master/LICENSE).
+ *
+ *
+ */
+
+@import "definitions.less";
+
+html,
+button,
+input,
+select,
+textarea {
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+html {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 112%;
+    background: url('../images/arrow_blue_down.png') 86% no-repeat;
+    background-color : @black;
+    background-size: 17px;
+    color: @white;
+    border: 0px;
+    option {
+        background-color: @black;
+        color: @white;
+    }
+}
+
+select:focus {
+    outline: none;
+}
+
+input[type=text] {
+    border: @dktk-blue solid 1px;
+    .box-shadow(1px, 1px, 5px, @dktk-blue);
+    border: @dktk-blue solid 1px;
+    background: @black;
+    color: @white;
+}
+
+.isWaiting * {
+  cursor: wait;
+}
+
+// workaround for problems when zooming out:
+// borders aren't zoomed correctly
+.innerContainer {
+    height: 100%;
+    width: 100%
+}

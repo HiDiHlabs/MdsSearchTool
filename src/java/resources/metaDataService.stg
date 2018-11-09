@@ -1,0 +1,133 @@
+group metaDataService;
+
+
+createEntityTypeTable(key) ::= <<
+CREATE TABLE <key> (
+  id SERIAL NOT NULL,
+  version INT8 NOT NULL DEFAULT 0,
+  PRIMARY KEY (id)
+);
+>>
+
+createEntityTypeForeignKey(key, parent) ::= <<
+ALTER TABLE <key>
+  ADD COLUMN parent_id bigint NOT NULL;
+ALTER TABLE <key>
+  ADD FOREIGN KEY (parent_id) REFERENCES <parent>;
+>>
+
+createEntityTypeMD() ::= <<
+INSERT INTO entity_type (name, key, order_, parent_id)
+  VALUES (:name, :key, :order, :parent)
+  RETURNING id;
+>>
+
+
+createAttributeTable(entityType, key, type, nullable) ::= <<
+DO $$
+BEGIN
+   ALTER TABLE <entityType>
+     ADD COLUMN <key> <type><if(!nullable)> NOT NULL<endif>;
+EXCEPTION
+   WHEN duplicate_column THEN
+     ALTER TABLE <entityType>
+     ALTER COLUMN <key> <if(nullable)>DROP<else>SET<endif> NOT NULL;
+END $$;
+COMMIT;
+>>
+
+createAttributeMD() ::= <<
+INSERT INTO attribute (name, key, description, groupable, type, nullable, entity_type_id, list_of_values_id, unit, format, version_)
+  VALUES (:name, :key, :description, :groupable, :type, :nullable, :entityType, :lov, :unit, :format, :version)
+  RETURNING id;
+>>
+
+
+updateAttributeTable(attribute) ::= <<
+ALTER TABLE <attribute.entityType.key>
+  ALTER COLUMN <attribute.key> <if(attribute.nullable)>DROP<else>SET<endif> NOT NULL
+>>
+
+updateAttributeMD() ::= <<
+UPDATE attribute
+  SET name = :name, description = :description, groupable = :groupable, nullable = :nullable, list_of_values_id = :lov,
+      unit = :unit, format = :format, version_ = :version
+  WHERE id = :id
+>>
+
+
+createOrUpdate(attribute) ::= <<
+BEGIN;
+WITH new_values (key, name, description, type, entity_type_id, list_of_values_id, nullable, groupable, unit, format, version_) AS (
+  VALUES
+     (?, ?, ?, ?, ?, CAST(? AS BIGINT), ?, ?, ?, ?, ?, 0)
+),
+upsert AS
+(
+
+    UPDATE attribute a
+        SET name = nv.name,
+            description = nv.description,
+            list_of_values_id = nv.list_of_values_id,
+            nullable = nv.nullable,
+            groupable = nv.groupable,
+            unit = nv.unit,
+            format = nv.format,
+            version_ = nv.version_
+    FROM new_values nv
+    WHERE a.key = nv.key
+    RETURNING a.*
+)
+
+INSERT INTO attribute (key, name, description, type, entity_type_id, list_of_values_id, nullable, groupable, unit, format, version_)
+SELECT key, name, description, type, entity_type_id, list_of_values_id, nullable, groupable, unit, format, version_
+FROM new_values
+WHERE NOT EXISTS (SELECT 1
+                  FROM upsert up
+                  WHERE up.key = new_values.key);
+
+DO $$
+BEGIN
+    ALTER TABLE <attribute.entityType.key>
+      ADD COLUMN <attribute.key> <attribute.type.sqlType><if(!attribute.nullable)> NOT NULL<endif>;
+EXCEPTION
+    WHEN duplicate_column THEN
+      ALTER TABLE <attribute.entityType.key>
+      ALTER COLUMN <attribute.key> <if(attribute.nullable)>DROP<else>SET<endif> NOT NULL;
+END $$;
+
+COMMIT;
+>>
+
+createOrUpdateAttribute(attribute) ::= <<
+BEGIN;
+WITH new_values (key, name, description, type, entity_type_id, list_of_values_id, nullable, groupable, unit, format, version_) AS (
+  VALUES
+     (?, ?, ?, ?, ?, CAST(? AS BIGINT), ?, ?, ?, ?, ?, 0)
+),
+upsert AS
+(
+
+    UPDATE attribute a
+        SET name = nv.name,
+            description = nv.description,
+            list_of_values_id = nv.list_of_values_id,
+            nullable = nv.nullable,
+            groupable = nv.groupable,
+            unit = nv.unit,
+            format = nv.format,
+            version_ = nv.version_
+    FROM new_values nv
+    WHERE a.key = nv.key
+    RETURNING a.*
+)
+
+INSERT INTO attribute (key, name, description, type, entity_type_id, list_of_values_id, nullable, groupable, unit, format, version_)
+SELECT key, name, description, type, entity_type_id, list_of_values_id, nullable, groupable, unit, format, version_
+FROM new_values
+WHERE NOT EXISTS (SELECT 1
+                  FROM upsert up
+                  WHERE up.key = new_values.key);
+
+COMMIT;
+>>

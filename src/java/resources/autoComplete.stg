@@ -1,0 +1,9 @@
+group autoComplete;
+
+ac(entityType, attribute, limit) ::= <<
+SELECT DISTINCT <attribute.key>
+    FROM <entityType.key>
+    WHERE <attribute.key> ILIKE '%'||?||'%'
+    ORDER BY <attribute.key> ASC
+    LIMIT <limit>
+>>

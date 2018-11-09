@@ -1,0 +1,3 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:samply_mdrkey="http://schema.samply.de/ccp/MdrKey" targetNamespace="http://schema.samply.de/ccp/MdrKey" version="1.0">
+    <xs:element name="MdrKey" type="xs:string"/>
+</xs:schema>

@@ -1,0 +1,11 @@
+<!--
+  ~ Copyright (c) 2018. dkfz
+  ~
+  ~ Distributed under the MIT License (license terms are at https://github.com/eilslabs/MdsSearchTool/blob/master/LICENSE).
+  ~
+  ~
+  -->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:samply_value="http://schema.samply.de/ccp/Value" targetNamespace="http://schema.samply.de/ccp/Value" version="1.0">
+    <xs:element name="Value" type="xs:string"/>
+</xs:schema>

@@ -1,0 +1,43 @@
+group dataService;
+
+create(entityType, attributes, parent) ::= <<
+INSERT INTO <entityType> (<attributes:{ attribute | <attribute.key> }; separator=", "><if(parent)>, parent_id<endif>)
+VALUES (<attributes:{ attribute | ? }; separator=", "><if(parent)>, ?<endif>)
+RETURNING id;
+>>
+
+updatePatient() ::= <<
+UPDATE patient SET updated_at = :updated  WHERE id = :id
+>>
+
+get(entityType, ids) ::= <<
+SELECT * FROM <entityType><if(ids)> WHERE id IN (<ids:{ id | ? }; separator=", ">)<endif>;
+>>
+
+get(entityType, ids) ::= <<
+SELECT * FROM <entityType><if(ids)> WHERE id IN (<ids:{ id | ? }; separator=", ">)<endif>;
+>>
+
+findWhere(entityType, attributes) ::= <<
+SELECT * FROM <entityType> WHERE <attributes:{ attribute | <attribute.key> = ? }; separator=" AND ">;
+>>
+
+
+
+delete(entityType, ids) ::= <<
+DELETE FROM <entityType> WHERE id IN (<ids:{ id | ? }; separator=", ">);
+>>
+
+deleteWhere(entityType, attributes, parent) ::= <<
+DELETE FROM <entityType>
+  WHERE <attributes:{ attribute | <attribute.key> = ? }; separator=" AND "><if(parent)> AND parent_id = ?<endif>;
+>>
+
+
+findAllDistinctValuesFor(attribute) ::= <<
+SELECT DISTINCT <attribute.key> FROM <attribute.entityType.key>
+>>
+
+doesAttributeContainNull(attribute) ::= <<
+SELECT COUNT(DISTINCT <attribute.key>) FROM <attribute.entityType.key> WHERE <attribute.key> IS NULL
+>>

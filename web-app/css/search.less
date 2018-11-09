@@ -1,0 +1,1171 @@
+/*
+ * Copyright (c) 2018. dkfz
+ *
+ * Distributed under the MIT License (license terms are at https://github.com/eilslabs/MdsSearchTool/blob/master/LICENSE).
+ *
+ *
+ */
+
+@import "definitions.less";
+
+.isInvisible {
+    visibility: hidden;
+}
+
+#container {
+    width: 960px;
+    margin: 0 auto -43px;
+    min-height: 100%;
+    height: auto !important;
+    height: 100%; /* lol IE */
+    display: block;
+    padding-bottom: 50px;
+}
+
+#container > * {
+    float: left;
+}
+#container div {
+    float: left;
+}
+
+#content {
+    width: 960px;
+    height: 100%;
+    background-color: @gray1;
+}
+
+#left-content {
+    float: left;
+    height: 738px;
+    width: 558px;
+}
+
+.hitsContainer {
+    padding: 5%;
+    display: none;
+}
+
+.hitsContainerItem {
+    width: 100%;
+    height: 100%;
+    background-color: @black;
+    .box-shadow (1px 1px 5px @dktk-blue);
+    border: @dktk-blue solid 1px;
+    color: @white;
+}
+
+#searchNavContainer {
+    float: left;
+    width: 400px;
+    height:100%;
+}
+
+#content nav > ul > li:first-child {
+    width: 349px;
+    border-width: 1px 0px 0 0;
+}
+
+#content nav > ul {
+    padding: 0px;
+    *margin-left: 0px
+}
+
+#content nav > ul > li {
+    color: @white;
+    background-color: @black;
+    font-size: 18px;
+    text-transform: uppercase;
+    width: 188px;
+    height: 28px;
+    margin: 0;
+    border-width: 1px 1px 0;
+    padding: 5px 0 0 10px;
+    *padding: 5px 0 0 10px;
+    float: left;
+    list-style-type: none;
+    border-width: 1px 0px 0px 1px;
+    border-color: @white;
+    border-style: solid;
+}
+
+#content nav > ul > li:last-child {
+    width: 191px;
+    border-width: 1px 0 0 1px;
+    color: @core-footer;
+}
+
+#content nav > ul > li > a {
+    color: @white;
+    text-decoration: none;
+    font: 18px;
+}
+
+#content nav > ul > li:nth-child(3) > a {
+    color: @core-green;
+}
+
+#content nav > ul > li:last-child > a {
+    color: @core-footer;
+}
+
+#content nav > ul > li > a:active,
+#content nav > ul > li > a:hover,
+#content nav > ul > li > a:active {
+    color: @dktk-blue;
+}
+
+#searchNavContainer ul {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+.queryNavItem {
+    border-width: 1px 0px 0px 1px;
+    border-color: @white;
+    border-style: solid;
+    background: @black;
+    height: 30px;
+    width: 400px;
+    border-bottom: @black solid 1px;
+}
+
+.queryNavItemSub {
+    border-width: 1px 0px 0px 1px;
+    border-color: @white;
+    border-style: solid;
+    background: @black;
+    height: 30px;
+    width: 341px;
+    border-bottom: @black solid 1px;
+    float: right;
+}
+
+.queryNavItemSL {
+    border-width: 1px 0px 0px 1px;
+    border-color: @white;
+    border-style: solid;
+    background: @black;
+    height: 30px;
+    width: 342px;
+    border-bottom: @black solid 1px;
+}
+
+.subQueryNavGroup {
+    border-width: 1px 0px 0px 1px;
+    border-color: @white;
+    border-style: solid;
+    background: @gray3;
+    width: 400px;
+}
+
+.subQueryNavGroup > .subQueryNavGroup {
+    border-width: 0px 0px 1px 1px;
+    border-color: @white;
+    border-style: solid;
+    background-color: @gray5;
+    width: 374px;
+    margin-left: 25px;
+}
+
+.subQueryNavGroup > .subQueryNavGroup:last-child {
+    border-bottom: none;
+}
+
+.subQueryNavGroup > .subQueryNavGroup > .subQueryNavContainer {
+    float: right;
+    border-width: 0px 0px 0px 1px;
+    border-color: @white;
+    border-style: solid;
+    background-color: @gray5;
+    width: 348px;
+}
+
+.subQueryNavItem {
+    background: @black;
+    width: 348px;
+}
+
+.itemLarge {
+    background: @black url('../images/bgrd_run_query.png') no-repeat;
+    height: 102px;
+}
+
+.itemMedium {
+    background: @black url('../images/bgrd_run_query.png') no-repeat;
+    height: 70px;
+}
+
+.itemSmall {
+    background: @black url('../images/bgrd_run_query.png') no-repeat;
+    height: 50px;
+}
+
+.bgrdItem {
+    background: @black url('../images/bgrd_item.png') no-repeat;
+}
+
+.itemMedium > .caption {
+    font-size: 36px;
+    text-transform: uppercase;
+    line-height: 72px;
+    padding-left: 10px;
+    span {
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
+
+.itemLarge > .caption {
+    font-size: 36px;
+    line-height: 102px;
+    padding-left: 10px;
+    span {
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
+
+.text {
+    float: left;
+    font-size: 15px;
+    text-transform: uppercase;
+    width: 329px;
+    padding: 7px 0px 15px 10px ;
+}
+
+.subQueryNavItem > .text {
+    float: left;
+    text-transform: none;
+    font-size: 14px;
+    height: 20px;
+    width: 315px;
+    padding: 5px 0px 5px 10px ;
+}
+
+.subText {
+    float: left;
+    font-size: 18px;
+    text-transform: uppercase;
+    padding-left: 10px;
+    margin-top: 15px;
+}
+
+.queryName {
+    float: left;
+    font-size: 18px;
+    text-transform: uppercase;
+    padding-left: 10px;
+    padding-bottom: 5px;
+    padding-top: 10px;
+}
+
+.arrow {
+    float: right !Important;
+    background: url('../images/arrow_blue_right.png') no-repeat 50% 50%;
+    height: 21px;
+    width: 23px;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-top: 5px;
+}
+
+.arrow_down {
+    background: url('../images/arrow_blue_down.png') no-repeat 50% 50%;
+}
+
+.bullet {
+    float: left;
+    background: @gray5 url('../images/bullet_gray.png') no-repeat 50% 50%;
+    height: 31px;
+    width: 29px;
+    border-width: 0px 1px 1px 0px;
+    border-color: @white;
+    border-style: solid;
+    cursor: pointer;
+}
+
+.groupBullet:hover ~ .groupText {
+    color: @dktk-blue;
+}
+
+.propertyBullet:hover ~ .propertyText {
+    color: @dktk-blue;
+}
+
+.glow {
+    background: @gray5 url('../images/bullet_glow_green.png') no-repeat 50% 50%;
+}
+
+.btnRunQuery {
+    float: right;
+    background: transparent url('../images/btn_run_query.png') no-repeat 50% 50%;
+    height: 85px;
+    width: 85px;
+    margin: 10px 40px 5px 5px ;
+    color: @gray1;
+    text-decoration: none;
+    line-height: 85px;
+    outline: none;
+    border: none;
+    span {
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 20px;
+        font-size: 30px;
+        text-transform: uppercase;
+    }
+}
+
+.btnRunQueryRunning {
+    background: transparent url('../images/btn_run_query.gif') no-repeat 50% 50%;
+}
+
+.sliderRight {
+    float: left;
+    background: transparent url('../images/slider_right.png') no-repeat;
+    height: 40px;
+    width: 105px;
+    margin: 5px 5px 5px 5px;
+    cursor: pointer;
+}
+
+.sliderLeft {
+    float: left;
+    background: transparent url('../images/slider_left.png') no-repeat ;
+    height: 40px;
+    width: 105px;
+    margin: 5px 5px 5px 5px;
+    cursor: pointer;
+}
+
+.tfLarge {
+    font-size: 15px;
+    height:15px;
+    width: 340px;
+    margin: 0px 0 5px 10px;
+
+}
+
+.tfStandard {
+    font-size: 15px;
+    float: left;
+    height: 15px;
+    width: 285px;
+    margin: 5px 0 5px 10px;
+}
+
+.selectBox {
+    margin-left: 10px;
+    margin-bottom: 5px;
+    width: 290px;
+    *width: 287px;
+    height: 19px;
+    overflow: hidden;
+    .box-shadow (1px 1px 5px @dktk-blue);
+    border: @dktk-blue solid 1px;
+    background-color: @black;
+}
+
+.selectBoxBar {
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 150px;
+    *width: 148px;
+    height: 19px;
+    overflow: hidden;
+    .box-shadow (1px 1px 5px @dktk-blue);
+    border: @dktk-blue solid 1px;
+    background-color: @black;
+}
+
+
+
+.ui-datepicker-year {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    background: none;
+    background-color : @black;
+    background-size: 17px;
+    color: @white;
+    border: 0px;
+    option {
+        background-color: @black;
+        color: @white;
+    }
+}
+
+.resultBarXAxisContainer > .styledSelect select {
+    text-transform: none;
+}
+
+.propertyContainer {
+    border-width: 0px 0px 0px 1px;
+    border-color: @white;
+    border-style: solid;
+    display: none;
+}
+
+.propertyItemSpace {
+    width: 29px;
+    height: 100%;
+    min-height: 30px;
+}
+
+.propertyItemSpaceSub {
+    width: 29px;
+    height: 100%;
+    min-height: 30px;
+    background: @gray5;
+    border-left: 1px solid white;
+
+}
+
+.propertyItem .innerContainer {
+    border-bottom: 1px solid @gray5;
+}
+
+
+.propertyItemSL .innerContainer {
+    border-bottom: 1px solid @gray5;
+}
+
+.propertyItem {
+    float: left;
+    width: 371px;
+    background: @gray5;
+    border-width: 0;
+}
+
+.propertyItemSL {
+    float: left;
+    width: 341px;
+    background: @gray5;
+    border-width: 0;
+}
+
+.propertyItemSL .innerContainer {
+    border-width: 1px 0 1px 1px;
+    border-color: @white @gray5 @white @white;
+    border-style: solid;}
+
+.propertyItem .innerContainer {
+    border-width: 1px 0 1px 1px;
+    border-color: @white @gray5 @white @white;
+    border-style: solid;
+}
+
+.propertyText {
+    float: left;
+    font-size: 12px;
+//    text-transform: uppercase;
+    padding: 9px 0px 15px 10px;
+    color: @white;
+    cursor: pointer;
+}
+
+.innerPropertyText {
+  float: left;
+  font-size: 12px;
+  //    text-transform: uppercase;
+  padding: 9px 0px 15px 10px;
+  color: @white;
+}
+
+.propertyText:hover {
+    color: @dktk-blue;
+}
+
+.propertyTextSingleAttribute:hover {
+    color: @white;
+}
+
+.groupText:hover {
+    color: @dktk-blue;
+}
+
+.groupText {
+    cursor: pointer;
+}
+
+.noTopBorder {
+    border-width: 0px 0px 0px 1px;
+}
+
+.propertyOptionContainer {
+    float: left;
+    width: 400px;
+    display: none;
+    height: 100%;
+}
+
+.propertyOptionContainerSub {
+    float: left;
+    width: 400px;
+    display: none;
+    height: 100%;
+}
+
+.propertyOptionItem {
+    background: @gray5;
+    width: 371px;
+    height: 100%;
+}
+
+.propertyOptionItem .innerContainer {
+    border-left: 1px solid @white;
+}
+
+.propertyOptionItemTable {
+    border-collapse: collapse;
+}
+
+.propertyOptionItem td:first-child {
+    width: 27px;
+    border-right: 1px solid @white;
+}
+
+.propertyOptionItemSub {
+    width: 27px;
+    border-right: 1px solid @white;
+}
+
+
+.text_addOperator {
+    color: @dktk-blue;
+    text-transform: uppercase;
+    font-size: 14px;
+    text-shadow: 1px -1px 3px @black;
+    padding: 5px 0px 0px 10px;
+    cursor: pointer;
+}
+
+.info {
+    float: right !Important;
+    height: 20px;
+    width: 20px;
+    background: transparent url('../images/info_blue.png') no-repeat center;
+    background-size: 20px 20px;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-top: 5px;
+}
+
+.currently-loading {
+    float: right !Important;
+    background: url('../images/loading-animation-circle.gif') no-repeat 50% 50%;
+    height: 23px;
+    width: 23px;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-top: 5px;
+}
+
+.infoQN {
+    margin-top: 0px;
+}
+
+.infoHits {
+    margin-top: 13px;
+}
+
+.menuInfo {
+    margin-right: 8px;
+}
+
+.propertyOptionContainer .info {
+    margin-top: 5px;
+}
+
+.text_datePicker, .text_numberInput {
+    color: @white;
+    font-size: 14px;
+    padding: 2px 0 0 10px;
+    width: 30px;
+    *width: 31px;
+}
+
+input[type=text].string {
+    margin: 0 0 10px 10px;
+    width:290px;
+    width:288px\9;
+    *width:287px;
+}
+
+input[type=text].number {
+    margin: 0 0 10px 10px;
+    width: 114px;
+    width: 113px\9;
+    *width: 112px;
+    padding-left: 5px;
+}
+
+input[type=text].number.numberBig {
+    width: 285px;
+    width: 283px\9; /*ie*/
+    *width: 282px;  /*ff*/
+}
+
+input[type=text].date {
+    margin: 0 0 10px 11px;
+    width: 93px;
+    padding-left: 5px;
+}
+
+input[type=text].inputError {
+    border: @core-footer solid 1px;
+    .box-shadow (1px 1px 5px @core-footer);
+}
+
+.singleNumberInput {
+    display: none;
+}
+
+.ui-tooltip {
+  border: @dktk-blue solid 1px;
+    .box-shadow (1px 1px 5px @dktk-blue);
+    background: @black;
+    color: @white;
+    font-size: 12px;
+    white-space: pre-line;
+}
+
+.innerListContainerItem {
+  width: 300px;
+  *padding-top: 5px;
+}
+
+.listContainerItem {
+    padding-bottom: 3px;
+    width: 330px;
+    *margin-top: 7px;
+}
+
+.listContainerItem span {
+ //   text-transform: uppercase;
+    font-size: 12px;
+    color: @dktk-blue;
+    text-shadow: 1px -1px 3px @black;
+    width: 290px;
+    cursor: pointer;
+    float:right;
+    line-height: 150%;
+}
+
+.listContainerItemSub {
+    padding-bottom: 3px;
+    width: 250px;
+    *margin-top: 7px;
+}
+
+.listContainerItemSub span {
+    //   text-transform: uppercase;
+    font-size: 12px;
+    color: @dktk-blue;
+    text-shadow: 1px -1px 3px @black;
+    width: 210px;
+    cursor: pointer;
+    float:right;
+    line-height: 150%;
+}
+
+.innerListContainerItem span {
+  //   text-transform: uppercase;
+  font-size: 12px;
+  color: @gray5;
+  text-shadow: 1px -1px 3px @black;
+  width: 100px;
+//  cursor: pointer;
+}
+
+.ie7Space {
+    *width: 300px;
+    *height: 10px;
+}
+
+.listContainerItem input {
+    width: 20px;
+    border: 0px;
+    .box-shadow (none);
+    background: none;
+    color: @white;
+    margin: 0 5px 10px 10px;
+    *margin: 0 0 0 10px;
+}
+
+.listContainerItemSub input {
+    width: 20px;
+    border: 0px;
+    .box-shadow (none);
+    background: none;
+    color: @white;
+    margin: 0 5px 10px 10px;
+    *margin: 0 0 0 10px;
+}
+
+.innerListContainerItem input {
+  width: 20px;
+  border: 0px;
+  .box-shadow (none);
+  background: none;
+  color: @white;
+  margin: 0 5px 10px 10px;
+  *margin: 0 0 0 10px;
+}
+
+.addOperator {
+    cursor: pointer;
+}
+
+.groupDeleteButton {
+    margin-left: 5px;
+    margin-top: 5px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    img {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+.groupResetButton {
+    margin-left: 344px;
+    margin-top: 5px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    img {
+        width: 30px;
+        height: 20px;
+    }
+}
+
+.propertyResetButton {
+    margin-top: 5px;
+    margin-right: 5px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    float: right !Important;
+    img {
+        width: 20px;
+        height: 20px;
+        float: right !Important;
+    }
+}
+
+.propertySelectAllButton {
+    margin-top: 5px;
+    margin-right: 5px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    float: right !Important;
+    img {
+        width: 20px;
+        height: 20px;
+        float: right !Important;
+    }
+}
+
+.propertyResetButtonSingleAttribute {
+    margin-right: 35px;
+}
+
+.resultContainer {
+    width: 558px;
+    height: 660px;
+}
+
+.resultDiv {
+    overflow-y: scroll;
+    height: 650px;
+    max-height: 650px;
+    width: 530px;
+    margin-left: 10px;
+    color: @black;
+    margin: 0 0 10px 10px;
+    font-size: 14px;
+}
+
+.operator {
+    margin-left: 5px;
+}
+
+.propertyOptionItemLogicalOperatorContainer {
+    width: 100%;
+    padding-top: 10px;
+}
+
+.propertyOptionItemLogicalOperatorContainerItem {
+    width: 100%;
+}
+
+.propertyOptionItemLogicalOperatorContainerItemSpace {
+    width: 100%;
+    height: 10px;
+}
+
+.queryResultContainer {
+    width: 100%;
+    height: 100%;
+    background: transparent url('../images/bgrd.png');
+}
+
+.queryResultHeader {
+    width: 100%;
+    height: 70px;
+    line-height: 69px;
+    padding-left: 10px;
+    font-size: 36px;
+    span{
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
+
+.queryResultNav {
+    width: 100%;
+    height: 103px;
+    border-top: 1px solid @white;
+}
+
+
+.queryResultNavItem {
+    background-color: @gray4;
+    border-left: 1px solid @white;
+    height: 100%;
+    font-size: 20px;
+    font-weight: bold;
+    color: @black;
+}
+
+.queryResultNavItemWhite {
+    padding-top: 10px;
+    padding: 2px 0px 0px 20px;
+    font-size: 20px;
+    height:30px;
+}
+
+.queryResultNavItemWhite span {
+    //   text-transform: uppercase;
+    //padding-left: 5px;
+    font-size: 15px;
+    width: 250px;
+    cursor: pointer;
+}
+
+.queryResultHitContainer {
+    width: 558px;
+    border-left: 0px;
+}
+
+.queryResultExport {
+    width: 103px
+}
+
+.queryResultClose {
+    width: 103px
+}
+
+.queryResultNavItem > div {
+    padding: 6px 0px 0px 20px;
+}
+
+
+.queryResultHits {
+    line-height:220%;
+    color: @core-green;
+    width: 520px;
+    height: 100%;
+}
+
+.queryResultChartContainer {
+    width: 100%;
+}
+
+.queryResultChartHeader {
+    width: 100%;
+    height: 31px;
+    background-color: @gray2;
+    border-top: 1px solid @white;
+    color: @white;
+    text-transform: uppercase;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.queryResultChartHeader:hover {
+    color: @dktk-blue;
+}
+
+.queryResultChartContent {
+    *margin-top: 13px;
+    padding-top: 2px\9;
+}
+
+body:not(:-moz-handler-blocked) .queryResultChartContent {
+    padding-top: 2px;
+}
+
+.queryResultListHeader {
+    width: 100%;
+    height: 31px;
+    background-color: @gray2;
+    border-top: 1px solid @white;
+    border-bottom: 1px solid @white;
+    color: @white;
+    text-transform: uppercase;
+    font-size: 15px;
+}
+
+.chartArrow {
+    .transform (90deg);
+}
+
+.queryResultExport:hover, .queryResultClose:hover {
+    color: @dktk-blue;
+    cursor: pointer;
+}
+
+.chartText {
+    cursor: pointer;
+    margin-top: 5px;
+    margin-left: 20px;
+}
+
+.chartText:hover {
+    color: @dktk-blue;
+}
+
+
+
+.listResultContainer {
+    position: absolute;
+    width: 960px;
+    height: 906px;
+    display: none;
+    background-color: grey;
+}
+
+.listResultResultContainer {
+    width: 900px;
+    height: 846px;
+    padding: 30px;
+    overflow-y: scroll;
+    max-height: 800px;
+}
+
+.resultBarXAxisContainer {
+    padding-top: 10px;
+}
+
+.bgStructureTable {
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+
+td.bgStructureTableCell {
+    padding: 0;
+}
+
+.bgStructure {
+    background: @white url('../images/pattern.png');
+    *width: 1000px;
+}
+
+.bgStructure > div {
+    width: 1000px;
+}
+
+.logo {
+    font-size: 50px;
+    padding: 10px 0 0 8px;
+    width: 962px;
+    margin: auto;
+    line-height: 90%;
+}
+
+.queryResultTime {
+    height: 20px;
+    width: 60px;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+// colors
+.blue {
+    color: @dktk-blue;
+}
+.dark_blue {
+    color: @dktk-blue-dark;
+}
+.white {
+    color: @white;
+}
+
+.green {
+    color: @core-green;
+}
+
+.red {
+    color: @core-footer;
+}
+
+.autoCompleteContainer {
+    position: absolute;
+    width: 290px;
+    height: 100px;
+    margin: -7px 0 10px 10px;
+    background: @black;
+    .box-shadow (1px 1px 5px @dktk-blue);
+    border: @dktk-blue solid 1px;
+    display: none;
+    overflow-y: scroll;
+}
+
+.autoCompleteItem {
+    height: 13px;
+    width: 270px;
+    color: @white;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.autoCompleteItem:hover {
+    color: @dktk-blue;
+}
+
+.btnPersonalQueries {
+    cursor: pointer;
+}
+
+.personalQueriesContainer {
+    width: 100%;
+    height: 100%;
+    background: transparent url('../images/bgrd.png');
+    display: none;
+}
+
+.personalQueriesContainerHeader {
+    width: 100%;
+    height: 89px;
+    text-transform: uppercase;
+    line-height: 89px;
+    padding-left: 10px;
+    font-size: 36px;
+    span {
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
+
+.personalQueriesContainerNav {
+    width: 100%;
+    height: 32px;
+    border-top: 1px solid @white;
+}
+
+.personalQueriesContainerNavItem {
+    background-color: @gray4;
+    border-left: 1px solid @white;
+    border-bottom: 1px solid @white;
+    height: 100%;
+    text-transform: uppercase;
+    font-size: 15px;
+    color: @white;
+}
+
+.personalQueriesContainerNavItem > div {
+    padding: 6px 0px 0px 10px;
+}
+
+.personalQueriesContainerClose {
+    width: 103px;
+}
+
+.btnPersonalQueriesContainerClose {
+    cursor: pointer;
+}
+
+.personalQueriesContainerUser {
+    width: 453px;
+}
+
+.personaleQueriesTableContainer {
+    margin-top: 20px;
+    padding: 4px;
+    width: 550px;
+}
+
+#personalQueriesTable_wrapper {
+    width: 100% !Important;
+}
+
+#personalQueriesTable_filter {
+    float: right !Important;
+    padding-bottom: 10px;
+}
+
+#personalQueriesTable_paginate {
+    float: right !Important;
+}
+
+.ui-button {
+    margin-left: 2px !Important;
+    margin-right: 0px !Important;
+}
+
+.ui-widget-content {
+    background: @black;
+}
+
+.ui-widget {
+    font-size: 12px !Important;
+}
+
+.propertyContainerSingleAttribute .propertyOptionContainer {
+     display: block !Important;
+}
+
+.propertyContainerSingleAttribute .propertyOptionContainer .propertyOptionItem td:first-child {
+    border-right: 0px !Important;
+}
+
+.propertyArrow {
+    margin-left: 5px;
+}
+
+td.singleAttribute {
+    width: 0px !Important;
+}
+
+
+.formItem {
+    font-weight: 200;
+    color: #FFF;
+    background: rgba(216, 216, 216, 0.31) none repeat scroll 0% 0%;
+    padding: 15px 15px 15px 15px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    border-width: 1px 1px 1px 1px;
+    border-style: solid;
+    border-color: #FFF;
+    -moz-border-top-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    border-image: none;
+    width: 90%;
+}
+
+.row {
+    margin-left: 5px;
+    margin-right: 5px;
+
+}
+
+

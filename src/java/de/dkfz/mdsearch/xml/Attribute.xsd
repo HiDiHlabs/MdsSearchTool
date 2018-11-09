@@ -1,0 +1,20 @@
+<!--
+  ~ Copyright (c) 2018. dkfz
+  ~
+  ~ Distributed under the MIT License (license terms are at https://github.com/eilslabs/MdsSearchTool/blob/master/LICENSE).
+  ~
+  ~
+  -->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:attribute="http://schema.samply.de/ccp/Attribute" xmlns:samply_mdrkey="http://schema.samply.de/ccp/MdrKey" xmlns:samply_value="http://schema.samply.de/ccp/Value" targetNamespace="http://schema.samply.de/ccp/Attribute" version="1.0">
+    <xs:import namespace="http://schema.samply.de/ccp/MdrKey" schemaLocation="MdrKey.xsd"/>
+    <xs:import namespace="http://schema.samply.de/ccp/Value" schemaLocation="Value.xsd"/>
+    <xs:element name="Attribute">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="samply_mdrkey:MdrKey"/>
+                <xs:element ref="samply_value:Value"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

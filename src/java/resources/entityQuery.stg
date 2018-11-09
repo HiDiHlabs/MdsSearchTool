@@ -1,0 +1,128 @@
+group entityQuery;
+
+
+count(entityTypes, entityTypeTree, conditions, conditionsExist, allowNullValues, attributeMdsk) ::= <<
+SELECT <entityTypes:{ entityType | COUNT(DISTINCT <entityType.key>.id)}; separator=", ">
+    FROM <entityTypeTree.data.key>
+
+    <entityTypeTree.children:{ node | <entityTreeJoin(node, attributeMdsk)> }>
+
+    <if(conditionsExist)>WHERE<endif>
+        <if(allowNullValues)>
+            <iConditionWithNull(conditions)>
+        <else>
+            <iCondition(conditions)>
+        <endif>
+>>
+
+countPatientsGroupBySite(conditionsExist)::= <<
+SELECT patient_site_id,patient_teiler_id, count(DISTINCT(patient_id)) FROM patient  <if(conditionsExist)>WHERE updated_at > ? <endif> GROUP BY patient_site_id,patient_teiler_id;
+>>
+
+groupBy(entityType, entityTypeTree, groupByAttribute, conditions, conditionsExist, allowNullValues, attributeMdsk) ::= <<
+SELECT <groupByAttribute.entityType.key>.<groupByAttribute.key>, COUNT(DISTINCT <entityType.key>.id)
+    FROM <entityTypeTree.data.key>
+
+    <entityTypeTree.children:{ node | <entityTreeJoin(node, attributeMdsk)> }>
+
+    <if(conditionsExist)>WHERE<endif>
+        <if(allowNullValues)>
+            <iConditionWithNull(conditions)>
+        <else>
+            <iCondition(conditions)>
+        <endif>
+    GROUP BY <groupByAttribute.entityType.key>.<groupByAttribute.key>
+>>
+
+
+groupByRange1(entityType, entityTypeTree, groupByAttribute, conditions, conditionsExist, allowNullValues, attributeMdsk) ::= <<
+WITH ranges AS (
+    SELECT CAST(ten*10 AS text)||'...'||CASE WHEN ten = 10 then '' ELSE CAST(ten*10+9 AS text) END AS range,
+               ten*10 AS r_min, CASE WHEN ten = 10 THEN 200 ELSE ten*10+9 END AS r_max
+    FROM generate_series(0,10) AS t(ten)
+    )
+SELECT r.range, COUNT(DISTINCT <entityType.key>.id)
+    FROM <entityTypeTree.data.key>
+
+    <entityTypeTree.children:{ node | <entityTreeJoin(node, attributeMdsk)> }>
+
+    LEFT JOIN ranges r
+    ON <groupByAttribute.entityType.key>.<groupByAttribute.key> BETWEEN r.r_min AND r.r_max
+
+    <if(conditionsExist)>WHERE<endif>
+        <if(allowNullValues)>
+            <iConditionWithNull(conditions)>
+        <else>
+            <iCondition(conditions)>
+        <endif>
+    GROUP BY r.range, r.r_min
+    ORDER BY r.r_min
+>>
+
+groupByRange(entityType, entityTypeTree, groupByAttribute, conditions, conditionsExist, allowNullValues, attributeMdsk) ::= <<
+SELECT CAST(<groupByAttribute.entityType.key>.<groupByAttribute.key>/10*10 AS text)||'...'||CASE WHEN <groupByAttribute.entityType.key>.<groupByAttribute.key>/10 = 10 then '' ELSE CAST(<groupByAttribute.entityType.key>.<groupByAttribute.key>/10*10+9 AS text) END AS range,
+    COUNT(DISTINCT <entityType.key>.id)
+    FROM <entityTypeTree.data.key>
+
+    <entityTypeTree.children:{ node | <entityTreeJoin(node, attributeMdsk)> }>
+
+    <if(conditionsExist)>WHERE<endif>
+        <if(allowNullValues)>
+            <iConditionWithNull(conditions)>
+        <else>
+            <iCondition(conditions)>
+        <endif>
+    GROUP BY range, <groupByAttribute.entityType.key>.<groupByAttribute.key>/10
+    ORDER BY <groupByAttribute.entityType.key>.<groupByAttribute.key>/10
+>>
+
+
+entityTreeJoin(treeNode, attributeMdsk) ::= <<
+FULL JOIN <if(treeNode.data.isMdsk)>(SELECT DISTINCT <attributeMdsk:{ attribute | <attribute.key> }; separator=", ">, parent_id FROM mds_k_view)<else><treeNode.data.key><endif> <treeNode.data.queryAlias>
+ON <treeNode.parent.data.key>.id = <treeNode.data.queryAlias>.parent_id
+<treeNode.children:{ node | <entityTreeJoin(node, attributeMdsk)> }>
+>>
+
+
+iCondition(condition) ::= <<
+<if(condition.not)>NOT <endif><(conditionMap.(condition.type))(condition)>
+>>
+
+iConditionWithNull(condition) ::= <<
+<if(condition.not)>NOT <endif><(conditionMapWithNull.(condition.type))(condition)>
+>>
+
+conditionMap ::= [
+    "LIST": "conditionList",
+    "EAV": "conditionEAV"
+]
+
+conditionMapWithNull ::= [
+    "LIST": "conditionListWithNull",
+    "EAV": "conditionEAVWithNull"
+]
+
+
+conditionList(condition) ::= <<
+<if(condition.conditions)>(<condition.conditions:{ scondition |<iCondition(scondition)>}; separator=condition.operator.sqlToken><!if(condition.conditions)!>)<endif>
+>>
+
+conditionListWithNull(condition) ::= <<
+<if(condition.conditions)>(<condition.conditions:{ scondition |<iConditionWithNull(scondition)>}; separator=condition.operator.sqlToken><!if(condition.conditions)!>)<endif>
+>>
+
+conditionEAVWithNull(condition) ::= <<
+<if(!condition.comparator.unary)>
+(<condition.attribute.key> <condition.comparator.sqlToken> ? OR <condition.attribute.key> IS NULL)
+<else>
+<condition.attribute.key> <condition.comparator.sqlToken>
+<endif>
+>>
+
+conditionEAV(condition) ::= <<
+<if(!condition.comparator.unary)>
+<condition.attribute.key> <condition.comparator.sqlToken> ?
+<else>
+<condition.attribute.key> <condition.comparator.sqlToken>
+<endif>
+>>
