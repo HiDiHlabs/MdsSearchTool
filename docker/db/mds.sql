@@ -1,0 +1,18 @@
+CREATE TABLE patient (
+  id SERIAL NOT NULL,
+  version INT8 NOT NULL DEFAULT 0,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE mds_k (
+  id SERIAL NOT NULL,
+  version INT8 NOT NULL DEFAULT 0,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE mds_b (
+  id SERIAL NOT NULL,
+  version INT8 NOT NULL DEFAULT 0,
+  PRIMARY KEY (id)
+);
+
