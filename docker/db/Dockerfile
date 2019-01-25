@@ -2,16 +2,13 @@ FROM postgres
 
 ENV POSTGRES_USER user123
 ENV POSTGRES_PASSWORD password123
-ENV POSTGRES_DB centralsearch
 
-#COPY a_create-schema.sql /
-#COPY create-mds_k-view.sql /
 
-ADD init/a_create-schema.sql /docker-entrypoint-initdb.d/a_create-schema.sql
-#ADD create-mds_k-view.sql /docker-entrypoint-initdb.d/b_create-mds_k-view.sql
-ADD init/c_dump.sql /docker-entrypoint-initdb.d/c_dump.sql
-ADD init/d_foreign-keys.sql /docker-entrypoint-initdb.d/d_foreign-keys.sql
 
+ADD init/1_pg_dump_dktk_schema_and_view.sql /docker-entrypoint-initdb.d/1_pg_dump_dktk_schema_and_view.sql
+ADD init/2_pg_dump_dktk_meta_data.sql /docker-entrypoint-initdb.d/2_pg_dump_dktk_meta_data.sql
+ADD init/3_pg_dump_dktk_mds_data.sql /docker-entrypoint-initdb.d/3_pg_dump_dktk_mds_data.sql
+ADD init/4_foreign_keys.sql /docker-entrypoint-initdb.d/4_foreign_keys.sql
 
 #RUN    psql -d centralsearch -U user123  -a -f docker-entrypoint-initdb.d
 #    && psql -d centralsearch -U user123  -a -f create-mds_k-view.sql
