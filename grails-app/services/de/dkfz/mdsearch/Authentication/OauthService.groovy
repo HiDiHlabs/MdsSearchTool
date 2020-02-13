@@ -8,14 +8,19 @@
 
 package de.dkfz.mdsearch.Authentication
 
+import de.dkfz.mdsearch.HttpProxyUtils
 import groovy.json.JsonSlurper
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.apache.http.HttpResponse
+import org.apache.http.HttpHost
+import org.apache.http.client.methods.HttpPost
 import org.apache.http.client.HttpClient
+//import org.apache.http.impl.client.HttpClientBuilder
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.conn.params.ConnRoutePNames
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
-import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.protocol.HTTP
 import org.apache.http.util.EntityUtils
 import org.codehaus.groovy.grails.commons.GrailsApplication
@@ -30,7 +35,34 @@ class OauthService {
     @Lazy
     private String oauthProviderUrl = grailsApplication.config.security.adfs.url + '/oauth2/token'
 
-    private HttpClient httpClient = new DefaultHttpClient()
+    private HttpClient httpClient = getHttpClient()
+    //private HttpClient httpClient = new DefaultHttpClient()
+
+    private HttpClient getHttpClient(){
+
+        //String httpProxy = System.getenv("HTTP_PROXY")
+
+        //HttpHost proxy = new HttpHost(MdrService.PROXY_HOST, MdrService.PROXY_PORT, "http")
+        //HttpHost proxy = new HttpHost("dmzproxy01.inet.dkfz-heidelberg.de", 3128, "http")
+        //HttpHost proxy = new HttpHost(httpProxy)
+
+        HttpHost proxy = HttpProxyUtils.getHttpHost()
+        HttpClient httpClient = new DefaultHttpClient()
+        httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy)
+
+
+        /*
+        String httpProxy = System.getenv("HTTP_PROXY");
+        HttpHost proxy = new HttpHost(httpProxy);
+        //HttpClient httpClient = HttpClientBuilder.create().setProxy(proxy).build();
+        HttpClient httpClient = new DefaultHttpClient();
+
+         */
+
+        return httpClient
+
+    }
+
 
     /**
      * Exchange an authorization code for an access token

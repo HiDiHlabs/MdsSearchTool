@@ -31,7 +31,7 @@ dataSource {
         maxActive = 20
         minIdle = 5
         maxIdle = 15
-        maxWait = 10000
+        maxWait = 60000
         maxAge = 10 * 60000
         timeBetweenEvictionRunsMillis = 5000
         minEvictableIdleTimeMillis = 60000

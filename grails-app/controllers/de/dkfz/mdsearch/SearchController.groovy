@@ -9,6 +9,7 @@
 package de.dkfz.mdsearch
 
 
+import de.dkfz.mdsearch.HttpProxyUtils
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.dkfz.ichip.query.*
@@ -23,10 +24,13 @@ import grails.converters.JSON
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.apache.http.HttpResponse
+import org.apache.http.HttpHost
 import org.apache.http.client.HttpClient
+import org.apache.http.conn.params.ConnRoutePNames
+//import org.apache.http.impl.client.HttpClientBuilder
+import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
-import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.protocol.HTTP
 import org.codehaus.groovy.grails.commons.GrailsApplication
 
@@ -44,7 +48,33 @@ class SearchController {
 
     List<EntityType> searchableEntityTypes = [EntityType.findByKey(MDS.PATIENT.key), EntityType.findByKey(MDS.MDS_B.key)]
 
-    private HttpClient httpClient = new DefaultHttpClient()
+    private HttpClient httpClient = getHttpClient()
+    //private HttpClient httpClient = new DefaultHttpClient()
+
+    private HttpClient getHttpClient(){
+
+        String httpProxy = System.getenv("HTTP_PROXY")
+
+        //HttpHost proxy = new HttpHost(MdrService.PROXY_HOST, MdrService.PROXY_PORT, "http")
+        //HttpHost proxy = new HttpHost("dmzproxy01.inet.dkfz-heidelberg.de", 3128, "http")
+        //HttpHost proxy = new HttpHost(httpProxy)
+        HttpHost proxy = HttpProxyUtils.getHttpHost()
+        HttpClient httpClient = new DefaultHttpClient()
+        httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy)
+
+
+        /*
+        String httpProxy = System.getenv("HTTP_PROXY");
+        HttpHost proxy = new HttpHost(httpProxy);
+        //HttpClient httpClient = HttpClientBuilder.create().setProxy(proxy).build();
+        HttpClient httpClient = new DefaultHttpClient();
+
+         */
+
+        return httpClient
+
+    }
+
 
     /*
      * sets attribute from the database
@@ -197,7 +227,8 @@ class SearchController {
 
 
     private String getJsonResponse(String query) {
-        def dcsUrl = grailsApplication.config.dcsUrl
+
+        def dcsUrl = grailsApplication.config.decentralsearch.forwarding.url
         HttpPost httpPost = new HttpPost(dcsUrl)
         log.info dcsUrl
         log.info "Authorization Bearer ${springSecurityService.principal.token}"

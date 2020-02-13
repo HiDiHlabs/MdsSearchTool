@@ -29,11 +29,22 @@ class BootStrap {
         String testSearchPwd = mdSearchProperties.getProperty(MdSearchProperty.TEST_SEARCH__PASSWORD.key)
 
 
+        String adminUser = mdSearchProperties.getProperty(MdSearchProperty.ADMIN_USER.key)
+        String adminPwd = mdSearchProperties.getProperty(MdSearchProperty.ADMIN_PASSWORD.key)
+
         if(monitoringUser && monitoringPwd && !monitoringUser.empty && !monitoringPwd.empty){
             if (User.findByUsername(monitoringUser) == null) {
                 new Role(authority: 'ROLE_MONITORING').save(flush: true)
                 User monitor = new User(username: monitoringUser, password: monitoringPwd, enabled: true, accountExpired: false, accountLocked: false, passwordExpired: false, mail: "monitoring@mail.com", displayName: "monitoring-user").save(flush: true)
                 new UserRole(user: monitor, role: Role.findByAuthority('ROLE_MONITORING')).save(flush: true, failOnError: true)
+            }
+        }
+
+        if(adminUser && adminPwd && !adminUser.empty && !adminPwd.empty){
+            if (User.findByUsername(adminUser) == null) {
+                new Role(authority: 'ROLE_ADMIN').save(flush: true)
+                User admin = new User(username: adminUser, password: adminPwd, enabled: true, accountExpired: false, accountLocked: false, passwordExpired: false, mail: "admin@mail.com", displayName: "admin-user").save(flush: true)
+                new UserRole(user: admin, role: Role.findByAuthority('ROLE_ADMIN')).save(flush: true, failOnError: true)
             }
         }
 

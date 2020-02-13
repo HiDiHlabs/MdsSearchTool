@@ -12,11 +12,14 @@ import grails.util.Environment
 import org.springframework.beans.BeansException
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 
 class ConfigService implements ApplicationContextAware {
 
     protected Map<MdSearchProperty, String> mdSearchProperties
+    private static final Log log = LogFactory.getLog(this)
 
     static ApplicationContext context
 
@@ -28,6 +31,7 @@ class ConfigService implements ApplicationContextAware {
         Properties properties = new Properties()
         String propertiesFile = System.getenv("MDSEARCH_PROPERTIES")
         if (propertiesFile && new File(propertiesFile).canRead()) {
+            log.info("MDSEARCH_PROPERTIES: ${propertiesFile}")
             properties.load(new FileInputStream(propertiesFile))
         } else {
             if(Environment.isDevelopmentMode()){

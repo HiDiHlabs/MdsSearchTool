@@ -42,10 +42,9 @@
 <div id="container">
     <div id="logo">
         <div class="logout">
-            %{--<sec:ifLoggedIn><g:message code="application.loggedIn"--}%
-                                       %{--args="[sec.loggedInUserInfo(field: 'displayName'), sec.username()]"/> | <g:link--}%
-                    %{--controller='j_spring_security_logout'><g:message--}%
-                        %{--code="application.logout"/></g:link></sec:ifLoggedIn>--}%
+            <sec:ifLoggedIn><g:link
+                    controller='j_spring_security_logout'><g:message
+                        code="application.logout"/></g:link></sec:ifLoggedIn>
         </div>
     </div>
     <g:layoutBody/>

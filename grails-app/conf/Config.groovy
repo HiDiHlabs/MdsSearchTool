@@ -310,3 +310,4 @@ if (upload) {
     }
 }
 authorities.mapping = roleMapping
+roleMapping.each{ k, v -> println "${k}:${v}" }
