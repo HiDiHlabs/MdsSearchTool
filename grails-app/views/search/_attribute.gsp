@@ -77,8 +77,8 @@
         <div class="propertyOptionItemLogicalOperatorContainerItem">
             <div class="selectBox">
                 <select size="1" class="upper">
-                    <option value="CO"><g:message code="search.query.comparator.CO"/></option>
                     <option value="EQ"><g:message code="search.query.comparator.EQ"/></option>
+                    <option value="CO"><g:message code="search.query.comparator.CO"/></option>
                 </select>
             </div>
             <div><input type="text" class="attributeAutocomplete string" placeholder="Hier Suchtext eingeben" data-attribute="${attribute.key}" data-entity="${attribute.entity}"></div>

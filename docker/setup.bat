@@ -20,5 +20,6 @@ cd %MY_PATH%/MdsSearchTool/docker
 :: %MY_PATH%/MdsSearchTool/docker
 
 docker-compose build
-docker-compose up -d
+::docker-compose up -d
+docker-compose up
 

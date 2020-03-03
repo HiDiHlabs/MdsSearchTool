@@ -2,6 +2,7 @@ version: "3"
 
 volumes:
   centralsearch-dbdata:
+  centralsearch-logs:
 
 services:
 
@@ -10,7 +11,7 @@ services:
 
     image: postgres:latest
     ports:
-    - "5435:5432"
+    - "5437:5432"
     volumes:
     - ./db/init:/docker-entrypoint-initdb.d # SQL-Scripts to initialize the database
     - centralsearch-dbdata:/var/lib/postgresql/data
@@ -24,11 +25,19 @@ services:
 
   app-web:
 
+    environment:
+      JAVA_OPTS: "-Dhttp.proxyHost=dmzproxy01.inet.dkfz-heidelberg.de -Dhttp.proxyPort=3128 -Dhttps.proxyHost=dmzproxy01.inet.dkfz-heidelberg.de -Dhttps.proxyPort=3128"
+      http_proxy: "http://dmzproxy01.inet.dkfz-heidelberg.de:3128"
+      https_proxy: "http://dmzproxy01.inet.dkfz-heidelberg.de:3128"
+
+
     build: ./web
     ports:
     - "8080:8080"
     - "8000:8000"
     - "65395:65395"
+    volumes:
+      - centralsearch-logs:/usr/local/tomcat/logs
     depends_on:
       - app-db
 

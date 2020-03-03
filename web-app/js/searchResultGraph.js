@@ -139,7 +139,6 @@ $(function () {
             event.preventDefault();
         }
         var timeBefore = new Date(),
-            timeAfter,
             xAxisValue,
             entityType,
             entityTypeText;
@@ -148,28 +147,21 @@ $(function () {
         entityType = $('.resultBarEntityType').val();
         entityTypeText = $('.resultBarEntityType option:selected').text();
 
-        $.when(patientsResult(query,xAxisValue,entityType), samplesResult(query,xAxisValue,entityType), patientsTotal(query,xAxisValue,entityType), samplesTotal(query,xAxisValue,entityType), chartResult(query,xAxisValue,entityType)).done(function(a1, a2, a3, a4, a5){
-            $('.btnRunQuery').removeClass('btnRunQueryRunning');
-            if(a1[2].status === 200 && a2[2].status === 200 && a3[2].status === 200 && a4[2].status === 200 && a5[2].status === 200){
-                var chartData,
-                    i;
-                $('.btnRunQuery').removeClass('btnRunQueryRunning');
+        displayPatientResults(query, xAxisValue, entityType, entityTypeText, timeBefore);
+        displayStatisticsChart(query, xAxisValue, entityType, entityTypeText, timeBefore);
+
+    }
+
+    function displayPatientResults (query, xAxisValue, entityType, entityTypeText, timeBefore){
+
+        $.when(patientsResult(query,xAxisValue,entityType), samplesResult(query,xAxisValue,entityType), patientsTotal(query,xAxisValue,entityType), samplesTotal(query,xAxisValue,entityType)).done(function(a1, a2, a3, a4){
+
+            if(a1[2].status === 200 && a2[2].status === 200 && a3[2].status === 200 && a4[2].status === 200){
+
+
                 $('.queryResultContainer').show();
 
-                chartData = {};
-                chartData.values = [];
-                chartData.valuesPossible = [];
-
-                chartData.items = []; //getLovForAttribute(xAxisValue);
-                for(var index = 0; index < a5[0].chart.length; ++index) {
-                    chartData.items.push(a5[0].chart[index].group);
-                    chartData.values.push(a5[0].chart[index].def);
-                    // chartData.valuesPossible.push(data.chart[index].pos);
-                }
-
-
-                setResultChart(chartData, entityTypeText);
-                timeAfter = new Date();
+                var timeAfter = new Date();
 
                 $('#patHits').html(a1[0].hits.Patient);
                 $('#patPosHits').html(a3[0].hits.PatientPos);
@@ -184,6 +176,81 @@ $(function () {
                 }
                 $('.queryResultTime').html('(' + (timeAfter.getTime() - timeBefore.getTime()) + ' ms)');
 
+
+            }
+            // the code here will be executed when all four ajax requests resolve.
+            // a1, a2, a3 and a4 are lists of length 3 containing the response text,
+            // status, and jqXHR object for each of the four ajax calls respectively.
+        });
+    }
+
+    function displayStatisticsChart (query, xAxisValue, entityType, entityTypeText, timeBefore){
+        $.when(chartResult(query,xAxisValue,entityType)).done(function(myChartResult){
+            $('.btnRunQuery').removeClass('btnRunQueryRunning');
+
+            var chartData;
+
+            $('.btnRunQuery').removeClass('btnRunQueryRunning');
+            $('.queryResultContainer').show();
+
+            chartData = {};
+            chartData.values = [];
+            chartData.valuesPossible = [];
+
+            chartData.items = []; //getLovForAttribute(xAxisValue);
+            for(var index = 0; index < myChartResult.chart.length; ++index) {
+                chartData.items.push(myChartResult.chart[index].group);
+                chartData.values.push(myChartResult.chart[index].def);
+                // chartData.valuesPossible.push(data.chart[index].pos);
+            }
+
+
+            setResultChart(chartData, entityTypeText);
+            var timeAfter = new Date();
+
+            $('.queryResultTime').html('(' + (timeAfter.getTime() - timeBefore.getTime()) + ' ms)');
+
+            $('.queryResultChartContent').hide();
+            $('.chartArrow').each(function () {
+                rotateElement($(this), 0);
+            });
+            var searchcriteria = $('#searchcriteria').parent();
+            $('#searchcriteria').parent().detach();
+            searchcriteria.insertAfter($('#decentralsearch').parent());
+            rotateElement($('#chart').children('.chartArrow'), 90);
+            $('#chart').next().show();
+
+
+        });
+    }
+
+    /*
+    function displayStatisticsChart (query, xAxisValue, entityType, entityTypeText, timeBefore){
+        $.when(chartResult(query,xAxisValue,entityType)).done(function(a1){
+            $('.btnRunQuery').removeClass('btnRunQueryRunning');
+            if(a1[2].status === 200){
+                var chartData;
+
+                $('.btnRunQuery').removeClass('btnRunQueryRunning');
+                $('.queryResultContainer').show();
+
+                chartData = {};
+                chartData.values = [];
+                chartData.valuesPossible = [];
+
+                chartData.items = []; //getLovForAttribute(xAxisValue);
+                for(var index = 0; index < a1[0].chart.length; ++index) {
+                    chartData.items.push(a1[0].chart[index].group);
+                    chartData.values.push(a1[0].chart[index].def);
+                    // chartData.valuesPossible.push(data.chart[index].pos);
+                }
+
+
+                setResultChart(chartData, entityTypeText);
+                var timeAfter = new Date();
+
+                $('.queryResultTime').html('(' + (timeAfter.getTime() - timeBefore.getTime()) + ' ms)');
+
                 $('.queryResultChartContent').hide();
                 $('.chartArrow').each(function () {
                     rotateElement($(this), 0);
@@ -194,11 +261,10 @@ $(function () {
                 rotateElement($('#chart').children('.chartArrow'), 90);
                 $('#chart').next().show();
             }
-            // the code here will be executed when all four ajax requests resolve.
-            // a1, a2, a3 and a4 are lists of length 3 containing the response text,
-            // status, and jqXHR object for each of the four ajax calls respectively.
+
         });
     }
+*/
 
     function samplesTotal(query,xAxisValue,entityType){
         return $.ajax({
