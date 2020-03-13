@@ -25,8 +25,16 @@ grails.project.dependency.resolution = {
         inherits true // Whether to inherit repository definitions from plugins
 
         String repoUrl = System.getenv("MAVEN_REPOSITORY_URL")
+        String samplyRepoUrl = System.getenv("MAVEN_SAMPLY_REPOSITORY_URL")
+        //String samplySnapshotRepoUrl = System.getenv("MAVEN_SAMPLY_SNAPSHOT_REPOSITORY_URL")
+
         assert repoUrl : "Set the environment variable MAVEN_REPOSITORY_URL"
+        //assert samplyRepoUrl : "Set the environment variable MAVEN_SAMPLY_REPOSITORY_URL"
+        //assert samplySnapshotRepoUrl : "Set the environment variable MAVEN_SAMPLY_SNAPSHOT_REPOSITORY_URL"
+
         mavenRepo repoUrl
+        mavenRepo samplyRepoUrl
+
     }
 
     dependencies {
@@ -37,6 +45,7 @@ grails.project.dependency.resolution = {
         compile "org.antlr:stringtemplate:4.0.2"
         compile "com.fasterxml.jackson.core:jackson-databind:2.2.0"
         compile "log4j:apache-log4j-extras:1.2.17"
+        compile "de.samply:share-dto:4.6.5"
     }
 
     plugins {

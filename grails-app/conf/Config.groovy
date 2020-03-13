@@ -198,7 +198,7 @@ log4j = {
 }
 
 grails.plugin.springsecurity.useBasicAuth = true
-grails.plugin.springsecurity.basic.realmName = "MDS Upload WebService"
+grails.plugin.springsecurity.basic.realmName = "definitions.MDS Upload WebService"
 
 grails.plugin.springsecurity.filterChain.chainMap = [
         '/sites/**': 'JOINED_FILTERS,-exceptionTranslationFilter',

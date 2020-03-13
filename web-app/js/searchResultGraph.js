@@ -224,48 +224,6 @@ $(function () {
         });
     }
 
-    /*
-    function displayStatisticsChart (query, xAxisValue, entityType, entityTypeText, timeBefore){
-        $.when(chartResult(query,xAxisValue,entityType)).done(function(a1){
-            $('.btnRunQuery').removeClass('btnRunQueryRunning');
-            if(a1[2].status === 200){
-                var chartData;
-
-                $('.btnRunQuery').removeClass('btnRunQueryRunning');
-                $('.queryResultContainer').show();
-
-                chartData = {};
-                chartData.values = [];
-                chartData.valuesPossible = [];
-
-                chartData.items = []; //getLovForAttribute(xAxisValue);
-                for(var index = 0; index < a1[0].chart.length; ++index) {
-                    chartData.items.push(a1[0].chart[index].group);
-                    chartData.values.push(a1[0].chart[index].def);
-                    // chartData.valuesPossible.push(data.chart[index].pos);
-                }
-
-
-                setResultChart(chartData, entityTypeText);
-                var timeAfter = new Date();
-
-                $('.queryResultTime').html('(' + (timeAfter.getTime() - timeBefore.getTime()) + ' ms)');
-
-                $('.queryResultChartContent').hide();
-                $('.chartArrow').each(function () {
-                    rotateElement($(this), 0);
-                });
-                var searchcriteria = $('#searchcriteria').parent();
-                $('#searchcriteria').parent().detach();
-                searchcriteria.insertAfter($('#decentralsearch').parent());
-                rotateElement($('#chart').children('.chartArrow'), 90);
-                $('#chart').next().show();
-            }
-
-        });
-    }
-*/
-
     function samplesTotal(query,xAxisValue,entityType){
         return $.ajax({
             url: createLink('search', 'samplesTotal'),

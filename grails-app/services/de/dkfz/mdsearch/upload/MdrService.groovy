@@ -58,6 +58,22 @@ class MdrService {
         return getMetaData("${MDR_BASE_URL}/namespaces/${namespace}/members")
     }
 
+    public getRootGroups(String[] namespaces) {
+
+        def rootGroups = null
+
+        for (String namespace : namespaces){
+            def rootGroupsAux = getMetaData("${MDR_BASE_URL}/namespaces/${namespace}/members");
+            if (rootGroups == null){
+                rootGroups = rootGroupsAux.results
+            } else {
+                rootGroups.addAll(rootGroupsAux.results)
+            }
+        }
+
+        return rootGroups
+    }
+
     /**
      * Entity Catalog
      * @return complete Catalog

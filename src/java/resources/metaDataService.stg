@@ -2,7 +2,7 @@ group metaDataService;
 
 
 createEntityTypeTable(key) ::= <<
-CREATE TABLE <key> (
+CREATE TABLE IF NOT EXISTS <key> (
   id SERIAL NOT NULL,
   version INT8 NOT NULL DEFAULT 0,
   PRIMARY KEY (id)

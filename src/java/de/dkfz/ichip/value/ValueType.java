@@ -10,6 +10,7 @@ package de.dkfz.ichip.value;
 
 public enum ValueType {
     DATE,
+    DATETIME,
     STRING,
     DOUBLE,
     LONG,
@@ -18,6 +19,7 @@ public enum ValueType {
 
     public static Value createValueForType(ValueType type) {
         switch (type) {
+            case DATETIME:
             case DATE:
                 return new DateValue();
             case STRING:
@@ -34,6 +36,7 @@ public enum ValueType {
 
     public String getSqlType() {
         switch (this) {
+            case DATETIME:
             case DATE:
                 return "timestamp without time zone";
             case STRING:

@@ -38,7 +38,7 @@ class EntityCatalogCheckService {
             List subCodes = element.subCodes
             List subEntities = codes.findAll { it.code in subCodes }
             Attribute attr = saveAttribute(element, subEntities)
-            Group group = MdsCheckService.createGroup("Tumorentität", 9, "mds_k")
+            Group group = MdsCheckService.createGroup("Tumorentität", 9)
             MdsCheckService.createGroupAttribute(group, attr, order)
             order++
             subEntities.each { subElement ->

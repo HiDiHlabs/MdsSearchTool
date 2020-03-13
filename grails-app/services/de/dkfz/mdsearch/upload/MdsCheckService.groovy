@@ -9,7 +9,10 @@
 package de.dkfz.mdsearch.upload
 
 import de.dkfz.ichip.value.ValueType
+import definitions.MDS
+import mapping.UrnEntityMapping
 import de.dkfz.mdsearch.metadata.*
+import mapping.UrnEntityMappingException
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 
@@ -25,9 +28,28 @@ class MdsCheckService {
     def metaDataService
 
     private static final Log log = LogFactory.getLog(this)
+    Map<String, String> urnEntity
 
 
-    final String NAMESPACE = "dktk"
+    MdsCheckService() {
+        initializeUrnEntity()
+    }
+
+    private void initializeUrnEntity() {
+        try {
+
+            UrnEntityMapping urnEntityMapping = new UrnEntityMapping()
+            this.urnEntity = urnEntityMapping.getUrnEntity()
+
+        } catch (UrnEntityMappingException e) {
+            e.printStackTrace()
+        }
+    }
+
+
+
+    final String[] NAMESPACE = ["dktk", "adt", "marker"]
+    //TODO(David): add list of namespaces: adt, dktk, marker
     final String URN_ATTRIBUTE_AGE_PREFIX = "urn_dktk_dataelement_1"
     final String URN_ATTRIBUTE_SEX_PREFIX = "urn_dktk_dataelement_28"
 
@@ -38,31 +60,32 @@ class MdsCheckService {
     public boolean checkAndUpdateAttributes() {
         try {
             def rootGroups = mdrService.getRootGroups(NAMESPACE)
-            assert rootGroups.results.size() == rootGroups.totalcount
+            //assert rootGroups.results.size() == rootGroups.totalcount
 
             MDS.values().each { mds ->
-                EntityType type = createEntityType(mds.key, mds.name, EntityType.findByKey(mds.parentKey), mds.order, mds)
-                String searchText = ""
-                if (mds.mdrDesignation != null) {
-                    if (mds.mdrDesignation.equalsIgnoreCase("MDS-K")) {
-                        searchText = "MDS-K (Klinische Daten)"
-                    }
-                    if (mds.mdrDesignation.equalsIgnoreCase("MDS-B")) {
-                        searchText = "MDS-B (Biomaterial-Daten)"
-                    }
-                }
-                def group = rootGroups.results.find { searchText in it.designations*.designation }
-                if (group) {
-                    updateListOfGroups(mds.name, mds.key, (group.id as String))
-                }
+                createEntityType(mds.key, mds.name, EntityType.findByKey(mds.parentKey), mds.order, mds)
             }
+
+            rootGroups.each { group ->
+
+                def name = group.designations.definition.get(0)
+                def urn = group.id
+                updateListOfGroups(name, urn)
+
+            }
+
             log.info(" ---- done ----")
+
             return true
+
         } catch (Exception e) {
-            log.info("Updating MDS failed:")
+
+            log.info("Updating definitions.MDS failed:")
             log.info(e.message, e)
             log.info(" ---------- ")
+
             return false
+
         }
     }
 
@@ -85,7 +108,7 @@ class MdsCheckService {
     }
 
 
-    private void updateListOfGroups(String name, String entityKey, String urn) {
+    private void updateListOfGroups(String name, String urn) {
 
         def mdrGroups = mdrService.getGroups(urn)
         int count = 0
@@ -93,9 +116,9 @@ class MdsCheckService {
         // only for top level data elements
         if (mdrGroups.results*.type.contains(ElementType.DATAELEMENT.toString())) {
             log.info("---- start Group ${name} ----")
-            Group group = createGroup(name, count, entityKey)
+            Group group = createGroup(name, count)
             count++
-            this.updateGroup(entityKey, group, urn)
+            this.updateGroup(group, urn)
             log.info("---- finished Group ----")
         }
 
@@ -105,24 +128,22 @@ class MdsCheckService {
         sorted.each { element ->
             if (element.type == ElementType.DATAELEMENTGROUP.toString()) {
                 log.info("---- start Group ${element.designations[0].designation} ----")
-                Group group = createGroup(element.designations[0].designation, count, entityKey)
+                Group group = createGroup(element.designations[0].designation, count)
                 count++
-                this.updateGroup(entityKey, group, element.id as String)
+                this.updateGroup(group, element.id as String)
                 log.info("---- finished Group ----")
             }
         }
     }
 
 
-    public static Group createGroup(String groupName, int order, String entityKey) {
+    public static Group createGroup(String groupName, int order) {
 
         Group group = Group.findByName(groupName)
         if (!group) {
             group = new Group()
             group.setName(groupName)
             group.setOrder(order)
-
-            group.setEntityType(EntityType.findByKey(entityKey))
 
             log.info("created group ${group.getName()}")
 
@@ -133,7 +154,7 @@ class MdsCheckService {
     }
 
 
-    private void updateGroup(String entityKey, Group group, String groupUrn) {
+    private void updateGroup(Group group, String groupUrn) {
         def mdrGroupMembers = mdrService.getGroups(groupUrn)
         int order = 0
 
@@ -141,22 +162,71 @@ class MdsCheckService {
             String urn = member.id
             switch (member.type as ElementType) {
                 case ElementType.DATAELEMENT:
-                    Attribute attribute = this.createAttribute(urn, EntityType.findByKey(entityKey))
-                    def metadata = mdrService.getMetaDataForAttribute(urn)
 
-                    // check whether the attribute should be shown in the GUI and searchable
-                    def searchable = metadata.slots.find { it.slot_name == "DKTK_SUCHBAR" }
-                    if (searchable?.slot_value == "D") {
-                        createGroupAttribute(group, attribute, order)
+                    String entityTypeKey = getEntityTypeKey(urn);
+                    if (entityTypeKey != null) {
+
+                        EntityType entityType = EntityType.findByName(entityTypeKey)
+
+                        if (entityType != null) {
+
+                            Attribute attribute = this.createAttribute(urn, entityType)
+                            def metadata = mdrService.getMetaDataForAttribute(urn)
+
+                            // check whether the attribute should be shown in the GUI and searchable
+                            def searchable = metadata.slots.find { it.slot_name == "DKTK_SUCHBAR" }
+                            if (searchable?.slot_value == "D") {
+                                createGroupAttribute(group, attribute, order)
+                            }
+
+                        }
+
                     }
+
                     break
+
                 case ElementType.DATAELEMENTGROUP:
                     // if this group contains a subgroup, its attributes should be added to this group
                     // so that we get a flat  hierarchy
-                    updateGroup(entityKey, group, urn)
+                    updateGroup(group, urn)
             }
             order++
         }
+    }
+
+    private String getEntityTypeKey(String urn){
+
+        urn = getMajor(urn)
+        return urnEntity.get(urn);
+
+    }
+
+    private String getMajor (String urn){
+
+        String[] split = urn.split(":")
+        if (split.length > 4){
+
+            StringBuilder stringBuilder = new StringBuilder()
+
+            boolean isFirstElement = true
+            for (int i=0; i< 4; i++){
+
+                if (!isFirstElement){
+                    stringBuilder.append(':')
+                }else{
+                    isFirstElement = false
+                }
+
+                stringBuilder.append(split[i])
+
+            }
+
+            urn = stringBuilder.toString()
+
+        }
+
+        return urn
+
     }
 
 
@@ -209,7 +279,9 @@ class MdsCheckService {
             item.setValue(value[1])
             item.setDescription(value[2])
         }
-        return lov.save(flush: true)
+
+        return (lov != null) ? lov.save(flush: true) : null
+
     }
 
 
@@ -229,6 +301,7 @@ class MdsCheckService {
             case DataType.STRING:
                 attribute.setType(ValueType.STRING)
                 break
+            case DataType.DATETIME:
             case DataType.DATE:
                 attribute.setType(ValueType.DATE)
                 metadata.slots.each { slot ->
@@ -337,6 +410,7 @@ class MdsCheckService {
     enum DataType {
         STRING,
         DATE,
+        DATETIME,
         INTEGER,
         BOOLEAN,
         enumerated,
@@ -348,34 +422,3 @@ class MdsCheckService {
     }
 }
 
-public final enum MDS {
-    PATIENT(null, "Patient", "patient", 0, null),
-    MDS_K("MDS-K", "Case", "mds_k", 1, "patient"),
-    MDS_B("MDS-B", "Biomaterial", "mds_b", 2, "patient");
-
-    String mdrDesignation
-    String name
-    String key
-    int order
-    String parentKey
-
-    def getSiteID() {
-        return "${key}_site_id"
-    }
-
-    def getTeilerID() {
-        return "${key}_teiler_id"
-    }
-
-    def getID() {
-        return "${key}_id"
-    }
-
-    MDS(mdrDesignation, name, key, order, parentKey) {
-        this.mdrDesignation = mdrDesignation
-        this.name = name
-        this.key = key
-        this.order = order
-        this.parentKey = parentKey
-    }
-}

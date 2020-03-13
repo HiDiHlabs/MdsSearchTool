@@ -20,6 +20,7 @@ import de.dkfz.mdsearch.metadata.Attribute
 import de.dkfz.mdsearch.metadata.EntityType
 import de.dkfz.mdsearch.upload.MDS
 import de.dkfz.mdsearch.xml.*
+import definitions.MDS
 import grails.converters.JSON
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
