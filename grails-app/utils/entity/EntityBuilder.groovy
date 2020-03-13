@@ -38,7 +38,7 @@ public class EntityBuilder {
         this.teilerId = teilerId
 
         EntityType entityType = getEntityType(sourceEntity);
-        Map<Attribute, Value> attributeValues = getAttributeValues(sourceEntity);
+        Map<Attribute, Value> attributeValues = getAttributeValues(sourceEntity, entityType);
 
         this.entity = createEntity(entityType, attributeValues, entityParent);
 
@@ -48,7 +48,7 @@ public class EntityBuilder {
         return dataService.createEntity(entType, entityAttributemap, pat)
     }
 
-    private Map<Attribute, Value> getAttributeValues (de.samply.share.model.ccp.Entity sourceEntity){
+    private Map<Attribute, Value> getAttributeValues (de.samply.share.model.ccp.Entity sourceEntity, EntityType entityType){
 
         Map<Attribute, Value> attributeValueMap = new HashMap<>();
 
@@ -63,6 +63,8 @@ public class EntityBuilder {
 
         }
 
+        addPatientAttributes(sourceEntity, entityType, attributeValueMap)
+
         return attributeValueMap;
 
     }
@@ -71,9 +73,10 @@ public class EntityBuilder {
 
         if (sourceEntity instanceof Patient){
 
-            MDS.findByKey(entityType.key);
-            Attribute siteId = de.dkfz.mdsearch.metadata.Attribute.findByKey(MDS.MDS_B.getSiteID())
-            Attribute teilerId = de.dkfz.mdsearch.metadata.Attribute.findByKey(MDS.MDS_B.getTeilerID())
+            def mds = getMDS(entityType)
+
+            Attribute siteId = de.dkfz.mdsearch.metadata.Attribute.findByKey(mds.getSiteID())
+            Attribute teilerId = de.dkfz.mdsearch.metadata.Attribute.findByKey(mds.getTeilerID())
 
             log.info("set ids")
 
@@ -83,6 +86,10 @@ public class EntityBuilder {
 
         }
 
+    }
+
+    private MDS getMDS (EntityType entityType){
+        return entityType.key.toUpperCase() as MDS
     }
 
 
