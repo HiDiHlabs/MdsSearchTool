@@ -11,6 +11,7 @@ package de.dkfz.mdsearch.upload
 import de.dkfz.ichip.value.ValueType
 import de.dkfz.mdsearch.metadata.Attribute
 import de.dkfz.mdsearch.metadata.Group
+import mapping.UrnUtils
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 
@@ -65,7 +66,7 @@ class EntityCatalogCheckService {
         def urn = element.identification.urn
         String version = urn.substring(urn.lastIndexOf(":") + 1)
         String key = urn.substring(0, urn.lastIndexOf(":"))
-        key = MdsCheckService.urnToKey(key)
+        key = UrnUtils.urnToKey(key)
 
         Attribute attribute = createAttribute(element, key, version)
 

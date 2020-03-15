@@ -13,6 +13,7 @@ import de.dkfz.mdsearch.metadata.Attribute
 import de.dkfz.mdsearch.metadata.EntityType
 import de.dkfz.mdsearch.metadata.Group
 import de.dkfz.mdsearch.upload.MdsCheckService
+import mapping.UrnUtils
 import org.springframework.context.MessageSource
 
 class GroupService {
@@ -245,7 +246,7 @@ class GroupService {
                             attribute.getListOfValues().getLoVItems().each { item ->
                                 String urn = item.getKey()
                                 urn = urn.substring(0, urn.lastIndexOf(":"))
-                                String key = MdsCheckService.urnToKey(urn)
+                                String key = UrnUtils.urnToKey(urn)
                                 Attribute attr = Attribute.findByKey(key)
                                 AttributeModel attrm = new AttributeModel()
                                 attrm.key = attr.key

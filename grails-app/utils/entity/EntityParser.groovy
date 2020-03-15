@@ -10,7 +10,7 @@ import java.util.List;
 
 public abstract class EntityParser {
 
-    protected abstract void parse(Entity entity, Entity entityParent);
+    protected abstract void parse(Entity entity, Entity entityParent) throws EntityParserException;
 
     protected void parse(Entity entity){
         parseEntityAndChildren(entity, null);

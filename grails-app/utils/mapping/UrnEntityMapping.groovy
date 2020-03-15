@@ -17,7 +17,8 @@ import java.util.Map;
 
 public class UrnEntityMapping {
 
-    private String csvSeparator = "\t";
+    private String csvSeparator = "\t"
+    private String comment = "--"
 
     private Map<String, String> urnEntity = new HashMap<>();
 
@@ -72,16 +73,25 @@ public class UrnEntityMapping {
 
     private void parse (String line){
 
-        String[] split = line.split(csvSeparator);
-        if (split.length >= 2){
 
-            String urn = split[0];
-            String entity = split[1];
+        if (!isComment(line)) {
 
-            urnEntity.put(urn, entity);
+            String[] split = line.split(csvSeparator);
+            if (split.length >= 2) {
+
+                String urn = split[0];
+                String entity = split[1];
+
+                urnEntity.put(urn, entity);
+
+            }
 
         }
 
+    }
+
+    private boolean isComment (String line){
+        return (line != null && line.length()> comment.length() && line.substring(0, comment.length()).equals(comment))
     }
 
     public Map<String, String> getUrnEntity() {

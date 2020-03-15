@@ -17,8 +17,11 @@ import de.dkfz.mdsearch.metadata.EntityType
 import de.utils.decryption.IdDecryptor
 import de.utils.decryption.IdDecryptor.CryptoException
 import definitions.MDS
+import entity.ParsedEntity
+import entity.PatientXmlParser
 import mapping.UrnEntityMapping
 import mapping.UrnEntityMappingException
+import mapping.UrnUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -38,11 +41,14 @@ class UploadService {
     static transactional = false
     private static final Log log = LogFactory.getLog(this)
 
+
     private Map<String, String> urnEntity
 
 
     def mdsCheckService
     def dataService
+
+    private PatientXmlParser patientXmlParser
 
     final def nsCase = new groovy.xml.Namespace("http://schema.samply.de/ccp/Case", 'ns7')
     final def nsSample = new groovy.xml.Namespace("http://schema.samply.de/ccp/Sample", 'ns8')
@@ -216,6 +222,7 @@ class UploadService {
     Map<String, Object> updatePatient2(String input, String siteId, String teilerId) throws Exception {
         boolean update = true
 
+
         Node rootNode = new XmlParser().parseText(input)
         String patientId
 
@@ -275,65 +282,9 @@ class UploadService {
 
     Map<String, Object> updatePatient(String input, String siteId, String teilerId) throws Exception {
 
-        boolean update = true
+        ParsedEntity parsedEntity = getPatientXmlParser().read(input, siteId, teilerId)
+        return parsedEntity.getErrorsMap()
 
-        Node rootNode = new XmlParser().parseText(input)
-
-        String patientId = getDecryptedPatientId(rootNode.'@id' as String)
-
-
-        Map<String, LinkedList<Map>> casesResult = this.createListOfEntities(rootNode, entityTypeCase, siteId, teilerId)
-        Map<String, LinkedList<Map>> samplesResult = this.createListOfEntities(rootNode, entityTypeSample, siteId, teilerId)
-
-        if (!casesResult.get("Entities").isEmpty() || !samplesResult.get("Entities").isEmpty()) {
-            if (!patientExist(patientId, siteId, teilerId, UploadController.UploadType.CASESAMPLE)) {
-                update = false
-                this.createPatient(patientId, siteId, teilerId)
-            }
-            Entity pat = this.findPatientById(patientId)
-            LinkedList<Map<Attribute, Value>> cases = casesResult.get("Entities")
-            LinkedList<Map<Attribute, Value>> samples = samplesResult.get("Entities")
-
-            cases.each { Map<Attribute, Value> entityAttributemap ->
-                log.info("save entity")
-                EntityType entType = EntityType.findByKey(MDS.MDS_K.key)
-                log.info("entitytype key: ${entType.key} pat: ${pat.id}")
-                dataService.createEntity(entType, entityAttributemap, pat)
-                log.info("saved entity")
-            }
-            samples.each { Map<Attribute, Value> entityAttributemap ->
-                log.info("save entity sample")
-                EntityType entType = EntityType.findByKey(MDS.MDS_B.key)
-                log.info("entitytype sam key: ${entType.key}")
-                dataService.createEntity(entType, entityAttributemap, pat)
-            }
-            Attribute attributeUpdateAt = new Attribute();
-            attributeUpdateAt.setType(ValueType.DATE)
-            attributeUpdateAt.setKey("updated_at")
-            pat.getValues().put(attributeUpdateAt, ValueType.createValueForType(attributeUpdateAt.type).set(new Date()))
-            if (update) {
-                dataService.updateEntity(EntityType.findByKey(MDS.PATIENT.key), pat.getValues(), pat.getId())
-            }
-        }
-
-        Entity patient = this.findPatientById(patientId)
-        if (patient != null) {
-            if (!hasCasesOrSamples(patient)) {
-                dataService.deleteEntityByIdAndType(EntityType.findByKey(MDS.PATIENT.key), patient.getId())
-            } else {
-                patient.getValues()
-            }
-        }
-        Map<String, Object> resultMapEntities = new HashMap<String, Object>()
-
-        LinkedList<Map<String, String>> caseErrors = casesResult.get("Errors")
-        LinkedList<Map<String, String>> sampleErrors = samplesResult.get("Errors")
-        resultMapEntities.put("cases", caseErrors)
-        resultMapEntities.put("samples", sampleErrors)
-        resultMapEntities.put("casesTotalAccepted", String.valueOf(casesResult.get("Entities").size()))
-        resultMapEntities.put("samplesTotalAccepted", String.valueOf(samplesResult.get("Entities").size()))
-        resultMapEntities.put("update", update)
-        return resultMapEntities
     }
 
 
@@ -490,7 +441,7 @@ class UploadService {
 
             String mdrkey = xmlAttribute[nsMdrKey.MdrKey].text()
             String mdrkeyVersion = StringUtils.substringAfterLast(mdrkey, ":")
-            String mdrkeyDB = mdsCheckService.urnToKey(StringUtils.substringBeforeLast(mdrkey, ":"))
+            String mdrkeyDB = UrnUtils.urnToKey(StringUtils.substringBeforeLast(mdrkey, ":"))
 
             Attribute attribute = Attribute.findByKey(mdrkeyDB)
             String val = xmlAttribute[nsValue.Value].text()
@@ -684,5 +635,14 @@ class UploadService {
             dataService.deleteEntityByIdAndType(EntityType.findByKey(MDS.PATIENT.key), patient.getId())
         }
         return update
+    }
+
+    private PatientXmlParser getPatientXmlParser () {
+
+        if (patientXmlParser == null) {
+            patientXmlParser = new PatientXmlParser(dataService)
+        }
+
+        return patientXmlParser
     }
 }

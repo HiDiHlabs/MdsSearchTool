@@ -13,6 +13,7 @@ import definitions.MDS
 import mapping.UrnEntityMapping
 import de.dkfz.mdsearch.metadata.*
 import mapping.UrnEntityMappingException
+import mapping.UrnUtils
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 
@@ -196,36 +197,8 @@ class MdsCheckService {
 
     private String getEntityTypeKey(String urn){
 
-        urn = getMajor(urn)
+        urn = UrnUtils.getMajor(urn)
         return urnEntity.get(urn);
-
-    }
-
-    private String getMajor (String urn){
-
-        String[] split = urn.split(":")
-        if (split.length > 4){
-
-            StringBuilder stringBuilder = new StringBuilder()
-
-            boolean isFirstElement = true
-            for (int i=0; i< 4; i++){
-
-                if (!isFirstElement){
-                    stringBuilder.append(':')
-                }else{
-                    isFirstElement = false
-                }
-
-                stringBuilder.append(split[i])
-
-            }
-
-            urn = stringBuilder.toString()
-
-        }
-
-        return urn
 
     }
 
@@ -288,7 +261,7 @@ class MdsCheckService {
     private Attribute createAttribute(String urn, EntityType entityType) {
         String version = urn.substring(urn.lastIndexOf(":") + 1)
         String key = urn.substring(0, urn.lastIndexOf(":"))
-        key = urnToKey(key)
+        key = UrnUtils.urnToKey(key)
 
         Attribute attribute = Attribute.findByKey(key)
 
@@ -388,18 +361,6 @@ class MdsCheckService {
         createAttributeId(mds.getID(), "${name} ID", "${name} Identifier", entityType)
 
         return entityType
-    }
-
-    /** convert URN string to string used as db key */
-    public static urnToKey(String urn) {
-        assert (!urn.contains("_"))
-        return urn.replace(":", "_").replace(".", "__")
-    }
-
-    /** convert string used as db key to URN string */
-    public static keyToUrn(String key) {
-        assert (!key.contains(".") && !key.contains(":"))
-        return key.replace("__", ".").replace("_", ":")
     }
 
     enum ElementType {

@@ -1,27 +1,26 @@
 package entity
 
 import de.dkfz.ichip.value.ValueType
-import de.dkfz.mdsearch.upload.MDS;
-import de.dkfz.mdsearch.xml.Attribute;
+import de.dkfz.mdsearch.DataService
+import de.dkfz.mdsearch.metadata.Attribute;
 import de.dkfz.ichip.entity.Entity;
 import de.dkfz.mdsearch.metadata.EntityType;
-import de.dkfz.ichip.value.Value;
-import de.samply.share.model.ccp.Patient
+import de.dkfz.ichip.value.Value
+import de.utils.decryption.IdGenerator
 import definitions.MDS
-
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
+import mapping.UrnUtils
+import de.samply.share.model.ccp.Patient
 
 public class EntityBuilder {
 
 
 
-    def dataService
-    private Entity entity;
-    private Map<String, String> errorsMap = new HashMap<>();
-    String siteid
-    String teilerId
+    private DataService dataService
+    private Entity entity
+    private Map<String, String> errorsMap = new HashMap<>()
+
+    private String siteid
+    private String teilerId
 
 
     public Entity getEntity() {
@@ -32,8 +31,9 @@ public class EntityBuilder {
         return errorsMap;
     }
 
-    public EntityBuilder(de.samply.share.model.ccp.Entity sourceEntity, Entity entityParent, String siteId, String teilerId) {
+    public EntityBuilder(DataService dataService, de.samply.share.model.ccp.Entity sourceEntity, Entity entityParent, String siteId, String teilerId) {
 
+        this.dataService = dataService
         this.siteid = siteId
         this.teilerId = teilerId
 
@@ -44,11 +44,11 @@ public class EntityBuilder {
 
     }
 
-    private Entity createEntity(EntityType type, Map<Attribute, Value> values, Entity entityParent) {
-        return dataService.createEntity(entType, entityAttributemap, pat)
+    private Entity createEntity(EntityType entityType, Map<Attribute, Value> attributeValues, Entity parentEntity) {
+        return dataService.createEntity(entityType, attributeValues, parentEntity)
     }
 
-    private Map<Attribute, Value> getAttributeValues (de.samply.share.model.ccp.Entity sourceEntity, EntityType entityType){
+    private Map<Attribute, Value> getAttributeValues (de.samply.share.model.ccp.Entity sourceEntity, EntityType entityType) {
 
         Map<Attribute, Value> attributeValueMap = new HashMap<>();
 
@@ -63,30 +63,67 @@ public class EntityBuilder {
 
         }
 
-        addPatientAttributes(sourceEntity, entityType, attributeValueMap)
+        addEntityAttributes(sourceEntity, entityType, attributeValueMap)
 
         return attributeValueMap;
 
     }
 
-    private void addPatientAttributes (de.samply.share.model.ccp.Entity sourceEntity, EntityType entityType, Map<Attribute, Value> attributeValueMap){
 
-        if (sourceEntity instanceof Patient){
-
-            def mds = getMDS(entityType)
-
-            Attribute siteId = de.dkfz.mdsearch.metadata.Attribute.findByKey(mds.getSiteID())
-            Attribute teilerId = de.dkfz.mdsearch.metadata.Attribute.findByKey(mds.getTeilerID())
-
-            log.info("set ids")
-
-            attributeValueMap.put(siteId, createValue(siteId, site))
-            attributeValueMap.put(teilerId, createValue(teilerId, teiler))
+    private void addEntityAttributes(de.samply.share.model.ccp.Entity sourceEntity, EntityType entityType, Map<Attribute, Value> attributeValueMap){
 
 
+        String entityId = getEntityId(sourceEntity)
+
+        def mds = getMDS(entityType)
+
+        addAttributeKeyValue(mds.getID(), entityId, attributeValueMap)
+        addAttributeKeyValue(mds.getSiteID(), siteid, attributeValueMap)
+        addAttributeKeyValue(mds.getTeilerID(), teilerId, attributeValueMap)
+
+        if (sourceEntity instanceof Patient) {
+            addUpdateAt(attributeValueMap)
         }
 
     }
+
+    private String getEntityId (de.samply.share.model.ccp.Entity sourceEntity) {
+
+        String entityId = sourceEntity.getId()
+        if (entityId == null){
+
+            entityId = generateRandomId()
+            sourceEntity.setId(entityId)
+        }
+
+        return entityId
+
+    }
+
+    private void addUpdateAt (Map<Attribute, Value> attributeValueMap){
+
+        Attribute attributeUpdateAt = new Attribute();
+        attributeUpdateAt.setType(ValueType.DATE)
+        attributeUpdateAt.setKey("updated_at")
+        Value updateAtValue = ValueType.createValueForType(attributeUpdateAt.type).set(new Date())
+
+        attributeValueMap.put(attributeUpdateAt, updateAtValue)
+
+    }
+
+    private void addAttributeKeyValue (String attributeId, String value, Map<Attribute, Value> attributeValueMap){
+
+        Attribute attribute = Attribute.findByKey(attributeId)
+        Value attributeValue = getValue(attribute, value)
+
+        attributeValueMap.put(attribute, attributeValue)
+
+    }
+
+    private String generateRandomId (){
+        return IdGenerator.generateRandomId()
+    }
+
 
     private MDS getMDS (EntityType entityType){
         return entityType.key.toUpperCase() as MDS
@@ -101,19 +138,38 @@ public class EntityBuilder {
     }
 
     private EntityType getEntityType (String designation){
-        return (designation != null) ?  EntityType.findByKey(designation) : null
+        return (designation != null) ?  EntityType.findByName(designation) : null
     }
 
     private Attribute convertToAttribute (de.samply.share.model.ccp.Attribute attribute){
 
-        String key = attribute.getMdrKey();
+        String key = getKey(attribute)
         return de.dkfz.mdsearch.metadata.Attribute.findByKey(key)
 
     }
 
-    private Value getValue (Attribute targetAttribute, de.samply.share.model.ccp.Attribute sourceAttribute){
-        return ValueParser.getValue()
+    private String getKey (de.samply.share.model.ccp.Attribute attribute){
+
+        String key = attribute.getMdrKey();
+        key = UrnUtils.getMajor(key)
+
+        return UrnUtils.urnToKey(key)
+
     }
+
+
+
+    private Value getValue (Attribute targetAttribute, de.samply.share.model.ccp.Attribute sourceAttribute){
+        return ValueParser.getValue(targetAttribute, sourceAttribute, errorsMap)
+    }
+
+    private Value getValue (Attribute targetAttribute, String value){
+        return ValueParser.getValue(value, targetAttribute, errorsMap)
+    }
+
+
+
+
 
 
 }
