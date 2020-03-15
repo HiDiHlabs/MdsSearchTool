@@ -45,7 +45,7 @@ class UploadService {
     private Map<String, String> urnEntity
 
 
-    def mdsCheckService
+
     def dataService
 
     private PatientXmlParser patientXmlParser
@@ -56,13 +56,6 @@ class UploadService {
     final def nsMdrKey = new groovy.xml.Namespace("http://schema.samply.de/ccp/MdrKey", 'ns5')
     final def nsValue = new groovy.xml.Namespace("http://schema.samply.de/ccp/Value", 'ns2')
 
-    /*
-    final String MDS_K = "definitions.MDS-K"
-    final String MDS_B = "definitions.MDS-B"
-    final entityTypeSample = "SAMPLE"
-    final entityTypeCase = "CASE"
-*/
-    IdDecryptor dec = null
 
     UploadService() {
         initializeUrnEntity()
@@ -153,6 +146,8 @@ class UploadService {
      * @param teilerId - teiler id of brueckenkopf
      * @return true if it is an update, false if it's a new patient
      */
+
+    //TODO(David): rewrite method
     boolean deletePatientsWithPrefix(String prefix, String siteId, String teilerId) throws Exception {
 
         EntityType entityPatient = EntityType.findByKey(MDS.PATIENT.key)
@@ -219,6 +214,8 @@ class UploadService {
      * @param teilerId - teiler id of brueckenkopf
      * @return true if it is an update, false if it's a new patient
      */
+
+    /*
     Map<String, Object> updatePatient2(String input, String siteId, String teilerId) throws Exception {
         boolean update = true
 
@@ -279,6 +276,7 @@ class UploadService {
         return resultMapEntities
 
     }
+    */
 
     Map<String, Object> updatePatient(String input, String siteId, String teilerId) throws Exception {
 
@@ -288,6 +286,7 @@ class UploadService {
     }
 
 
+    /*
     private Entity createPatient(String patientId, String siteId, String teilerId) {
 
         Attribute siteid = Attribute.findByKey(MDS.PATIENT.getSiteID())
@@ -305,7 +304,7 @@ class UploadService {
 
         return dataService.createEntity(EntityType.findByKey(MDS.PATIENT.key), values)
     }
-
+*/
 
     boolean patientExist(String patientId, String siteId, String teilerId, UploadController.UploadType type) {
         log.info("patient id: ${patientId}")
@@ -372,7 +371,7 @@ class UploadService {
             dataService.deleteAllEntitiesByQueryParamsAndType(EntityType.findByKey(MDS.MDS_B.key), values, patient)
     }
 
-
+/*
     private Map<String, LinkedList<Map>> createListOfEntities(Node rootNode, String site, String teiler) {
 
         LinkedList<Map<Attribute, Value>> entities = new LinkedList<Map<Attribute, Value>>()
@@ -523,7 +522,7 @@ class UploadService {
         }
         return true;
     }
-
+*/
 
     private Entity findPatientById(String patientid) {
 
@@ -555,29 +554,6 @@ class UploadService {
     }
 
 
-    private String getDecryptedPatientId(String encryptedId) throws Exception {
-        def patientId
-        try {
-            dec = getIdDecryptor()
-            patientId = dec.decrypt(encryptedId)
-        } catch (CryptoException e) {
-            log.error(e)
-            throw new Exception("Encrypted Id is not valid!")
-        }
-
-        return patientId
-    }
-
-    private IdDecryptor getIdDecryptor(){
-
-        if (dec == null) {
-            dec = new IdDecryptor(System.getProperty("user.home") + "/key/private-key.der", 200)
-        }
-
-        return dec
-
-    }
-
     /**
      * Saves Case with given input data for given patient
      * @param input - XML data which contains a case
@@ -587,6 +563,7 @@ class UploadService {
      * @param caseId - case id
      * @return true if successful
      */
+    /*
     boolean saveCase(String input, String encryptedPatientId, String siteId, String teilerId) {
 
         boolean update = true
@@ -607,6 +584,8 @@ class UploadService {
         return update
     }
 
+     */
+
     /**
      * Saves Sample with given input data for given patient
      * @param input - XML data which contains a sample
@@ -616,6 +595,7 @@ class UploadService {
      * @param caseId - case id
      * @return true if successful
      */
+    /*
     boolean saveSample(String input, String encryptedPatientId, String siteId, String teilerId) {
 
         boolean update = true
@@ -636,7 +616,7 @@ class UploadService {
         }
         return update
     }
-
+*/
     private PatientXmlParser getPatientXmlParser () {
 
         if (patientXmlParser == null) {
@@ -645,4 +625,7 @@ class UploadService {
 
         return patientXmlParser
     }
+
+
+
 }

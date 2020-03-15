@@ -46,6 +46,7 @@ grails.project.dependency.resolution = {
         compile "com.fasterxml.jackson.core:jackson-databind:2.2.0"
         compile "log4j:apache-log4j-extras:1.2.17"
         compile "de.samply:share-dto:4.6.5"
+        compile "de.samply:common-mdrvalidator:2.0.0"
     }
 
     plugins {

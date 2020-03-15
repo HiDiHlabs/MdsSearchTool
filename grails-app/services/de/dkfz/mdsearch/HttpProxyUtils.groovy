@@ -4,6 +4,11 @@ import org.apache.http.HttpHost
 
 class HttpProxyUtils{
 
+
+    public static void getSomething(){
+        HttpConnector
+    }
+
     public static HttpHost getHttpHost(){
 
         def proxyPort = getProxyPort()

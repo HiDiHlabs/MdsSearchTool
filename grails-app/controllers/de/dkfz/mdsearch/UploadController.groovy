@@ -35,35 +35,23 @@ class UploadController {
         SAMPLE;
     }
 
-    private Map<String, Object> uploadEntity(String siteid, String teilerid, String patientid, String xmlStr, String entityid, UploadType type) throws SAXException, Exception {
+    private Map<String, String> uploadEntity(String siteid, String teilerid, String xmlEntity) throws SAXException, Exception {
 
         verifyTeilerId(teilerid)
 
         log.info("----- Raw Data Start--------------")
-        log.info(xmlStr)
+        log.info(xmlEntity)
         log.info("----- Raw Data End--------------")
 
         Date startDate = new Date()
 
         log.info("Validating input data ...")
-        XMLValidator.validate(xmlStr)
+        XMLValidator.validate(xmlEntity)
         log.info("Input data is valid")
 
-        Map<String, Object> result
-        switch (type) {
-            case UploadType.CASE:
-                log.info("---------- Start Loading Cases from $teilerid -------------------")
-                result = uploadService.saveCase(xmlStr, patientid, siteid, teilerid)
-                break
-            case UploadType.SAMPLE:
-                log.info("---------- Start Loading Samples from $teilerid -------------------")
-                result = uploadService.saveSample(xmlStr, patientid, siteid, teilerid)
-                break
-            default:
-                log.info("---------- Start Loading Patients from $teilerid -------------------")
-                result = uploadService.updatePatient(xmlStr, siteid, teilerid)
-                break
-        }
+
+        log.info("---------- Start Loading Patients from $teilerid -------------------")
+        Map<String, Object> result = uploadService.updatePatient(xmlEntity, siteid, teilerid)
 
         Date endDate = new Date()
         TimeDuration td = TimeCategory.minus(endDate, startDate)
@@ -87,7 +75,7 @@ class UploadController {
             String patientid = params.patientid as String
             siteid = siteid.toLowerCase()
 
-            Map<String, Object> result = uploadEntity(siteid, teilerid, patientid, xmlStr, null, UploadType.CASESAMPLE)
+            Map<String, Object> result = uploadEntity(siteid, teilerid, xmlStr)
 
             if (((LinkedList<Map<String, String>>) result.get("cases")).size() == 0 && ((LinkedList<Map<String, String>>) result.get("samples")).size() == 0) {
                 if ((boolean) result.get("update")) {
@@ -97,7 +85,7 @@ class UploadController {
                 }
             } else {
                 LinkedList<Map<String, String>> cases = ((LinkedList<Map<String, String>>) result.get("cases"))
-                LinkedList<Map<String, String>> samples = ((LinkedList<Map<String, String>>) result.get("samples"))
+
                 log.error("<Patient id='${patientid}'>")
                 log.error(" <Cases declined=${cases.size()} accepted=${result.get("casesTotalAccepted")}>")
                 for (caseError in cases) {
@@ -110,33 +98,25 @@ class UploadController {
                     log.error("     </Case>")
                 }
                 log.error(" </Cases>")
-                log.error(" <Samples declined=${samples.size()} accepted=${result.get("samplesTotalAccepted")}>")
-                for (sampleError in samples) {
-                    log.error("     <Sample id='${sampleError.get("entityId")}'>")
-                    for (sampleAttr in sampleError) {
-                        if (!sampleAttr.key.equalsIgnoreCase("entityId")) {
-                            log.error("         <Attribute key='${sampleAttr.key}' >${sampleAttr.value}</Attribute>")
-                        }
-                    }
-                    log.error(" </Sample>")
-                }
-                log.error(" </Samples>")
                 log.error("</Patient>")
 
                 render(status: 400)
             }
+
         } catch (SAXException saxexp) {
+
             log.error("XML Input is not valid $saxexp")
             render(text: "<ERROR><INFO>Data is not valid</INFO><MESSAGE>${saxexp.message}</MESSAGE></ERROR>", contentType: "text/xml", encoding: "UTF-8", status: 400)
 
         }
         catch (Exception exp) {
+
             log.error(exp.message, exp)
             render(text: "<Error>${exp.message}</Error>", contentType: "text/xml", encoding: "UTF-8", status: 400)
         }
     }
 
-
+/*
     def uploadCase() {
 
         try {
@@ -199,7 +179,7 @@ class UploadController {
 
 
     }
-
+*/
 
     def uploadStats() {
 

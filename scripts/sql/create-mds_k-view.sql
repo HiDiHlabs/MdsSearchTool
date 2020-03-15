@@ -1,6 +1,6 @@
 CREATE MATERIALIZED VIEW mds_k_view AS
 SELECT
-	patient.id
+	patient.patient_id,
 	urn_adt_dataelement_28, --Diagnosis
 	urn_adt_dataelement_29, --Diagnosis
 	urn_adt_dataelement_109, --Diagnosis
@@ -140,7 +140,7 @@ SELECT
 				LEFT JOIN histology ON histology.parent_id = tumour.id
 				LEFT JOIN metastasis ON metastasis.parent_id = tumour.id
 				LEFT JOIN tnm ON tnm.parent_id = tumour.id
-				LEFT JOIN molekular_marker ON molekular_marker.parent_id = tumour.id
+				LEFT JOIN molecular_marker ON molecular_marker.parent_id = tumour.id
 				LEFT JOIN progress ON progress.parent_id = tumour.id
 					LEFT JOIN surgery ON surgery.parent_id = progress.id
 					LEFT JOIN radiation_therapy ON radiation_therapy.parent_id = progress.id
