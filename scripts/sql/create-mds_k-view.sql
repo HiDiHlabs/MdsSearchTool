@@ -38,12 +38,6 @@ SELECT
 	urn_dktk_dataelement_63, --Patient
 	urn_dktk_dataelement_64, --Patient
 	urn_dktk_dataelement_91, --Patient
-	urn_itframe_dataelement_1, --Patient
-	urn_itframe_dataelement_2, --Patient
-	urn_itframe_dataelement_3, --Patient
-	urn_itframe_dataelement_4, --Patient
-	urn_itframe_dataelement_5, --Patient
-	urn_itframe_dataelement_6, --Patient
 	urn_adt_dataelement_68, --Progress
 	urn_adt_dataelement_96, --Progress
 	urn_adt_dataelement_97, --Progress
