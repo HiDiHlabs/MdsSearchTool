@@ -76,10 +76,6 @@ SELECT
 				LEFT JOIN molecular_marker ON molecular_marker.parent_id = tumour.id
 				LEFT JOIN progress ON progress.parent_id = tumour.id
 					LEFT JOIN surgery ON surgery.parent_id = progress.id
-					LEFT JOIN radiation_therapy ON radiation_therapy.parent_id = progress.id
-						LEFT JOIN radiation_adverse_effects ON radiation_adverse_effects.parent_id = radiation_therapy.id
-					LEFT JOIN system_therapy ON system_therapy.parent_id = progress.id
-						LEFT JOIN system_adverse_effects ON system_adverse_effects.parent_id = system_therapy.id
 WITH DATA;
 
 

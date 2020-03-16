@@ -96,7 +96,7 @@ class MetaDataService {
         ST versionMD = group.getInstanceOf("createAttributeTable")
         def stMDSql
         if (attribute.entityType == null) {
-            attribute.setEntityType(EntityType.findByKey("mds_k")) //TODO(David): select default entity ???
+            attribute.setEntityType(EntityType.findByKey("patient"))
             stMDA.add("attribute", attribute)
             stMDSql = stMDA.render()
         } else {

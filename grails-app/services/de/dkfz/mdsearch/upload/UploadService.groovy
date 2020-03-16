@@ -14,19 +14,14 @@ import de.dkfz.ichip.value.ValueType
 import de.dkfz.mdsearch.UploadController
 import de.dkfz.mdsearch.metadata.Attribute
 import de.dkfz.mdsearch.metadata.EntityType
-import de.utils.decryption.IdDecryptor
-import de.utils.decryption.IdDecryptor.CryptoException
 import definitions.MDS
 import entity.ParsedEntity
 import entity.PatientXmlParser
 import mapping.UrnEntityMapping
 import mapping.UrnEntityMappingException
-import mapping.UrnUtils
-import org.apache.commons.lang.StringUtils
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -50,12 +45,13 @@ class UploadService {
 
     private PatientXmlParser patientXmlParser
 
+    /*
     final def nsCase = new groovy.xml.Namespace("http://schema.samply.de/ccp/Case", 'ns7')
     final def nsSample = new groovy.xml.Namespace("http://schema.samply.de/ccp/Sample", 'ns8')
     final def nsAttribute = new groovy.xml.Namespace("http://schema.samply.de/ccp/Attribute", 'ns3')
     final def nsMdrKey = new groovy.xml.Namespace("http://schema.samply.de/ccp/MdrKey", 'ns5')
     final def nsValue = new groovy.xml.Namespace("http://schema.samply.de/ccp/Value", 'ns2')
-
+*/
 
     UploadService() {
         initializeUrnEntity()

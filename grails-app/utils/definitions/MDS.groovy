@@ -12,14 +12,13 @@ public final enum MDS {
     TNM (null, "Tnm", "tnm", 6, "tumour"),
     MOLECULAR_MARKER (null, "MolecularMarker", "molecular_marker", 7, "tumour"),
     PROGRESS (null, "Progress", "progress", 8, "tumour"),
-    SURGERY (null, "Surgery", "surgery", 9, "progress"),
+    SURGERY (null, "Surgery", "surgery", 9, "progress");
+    /*
     RADIATION_THERAPY (null, "RadiationTherapy", "radiation_therapy", 10, "progress"),
     RADIATION_ADVERSE_EFFECTS (null, "RadiationAdverseEffects", "radiation_adverse_effects", 11, "radiation_therapy"),
     SYSTEM_THERAPY (null, "SystemTherapy", "system_therapy", 12, "progress"),
     SYSTEM_ADVERSE_EFFECTS (null, "SystemAdverseEffects", "system_adverse_effects", 13, "system_therapy");
-
-    //MDS_K("definitions.MDS-K", "Case", "mds_k", 1, "patient"),
-    //MDS_B("definitions.MDS-B", "Biomaterial", "mds_b", 2, "patient");
+    */
 
     String mdrDesignation
     String name

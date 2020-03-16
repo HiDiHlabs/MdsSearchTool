@@ -15,6 +15,7 @@ import grails.plugin.springsecurity.SpringSecurityUtils
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
 import groovy.xml.StreamingMarkupBuilder
+import mapping.TeilerWhitelistReader
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.springframework.security.access.AccessDeniedException
@@ -28,6 +29,8 @@ class UploadController {
     def queryService
 
     private static final Log log = LogFactory.getLog(this)
+    private Set<String> teilerWhitelist
+
 
     enum UploadType {
         CASESAMPLE,
@@ -63,7 +66,25 @@ class UploadController {
 
     }
 
-    def update() {
+    def update(){
+
+        def writer = new StringWriter()
+        writer << new StreamingMarkupBuilder().bind { mkp.yield request.getXML() }
+        String xmlStr = writer.toString()
+
+        String siteid = params.siteid as String
+        String teilerid = params.teilerid as String
+        String patientid = params.patientid as String
+        siteid = siteid.toLowerCase()
+
+        Map<String, Object> result = uploadEntity(siteid, teilerid, xmlStr)
+
+        render (status: 200)
+        //TODO:Process errors
+
+    }
+
+    def update2() {
 
         try {
             def writer = new StringWriter()
@@ -76,6 +97,7 @@ class UploadController {
             siteid = siteid.toLowerCase()
 
             Map<String, Object> result = uploadEntity(siteid, teilerid, xmlStr)
+
 
             if (((LinkedList<Map<String, String>>) result.get("cases")).size() == 0 && ((LinkedList<Map<String, String>>) result.get("samples")).size() == 0) {
                 if ((boolean) result.get("update")) {
@@ -340,10 +362,25 @@ class UploadController {
     }
 
     private verifyTeilerId(String teilerId) throws AccessDeniedException {
-        if (teilerId.toLowerCase() != springSecurityService.principal.username.toLowerCase()) {
+
+        if (!isTeilerIdInWhitelist(teilerId) || teilerId.toLowerCase() != springSecurityService.principal.username.toLowerCase()) {
             log.info teilerId + " " + springSecurityService.principal.username
             throw new AccessDeniedException("Wrong Teiler ID")
         }
+
+    }
+
+    private boolean isTeilerIdInWhitelist(String teilerId){
+
+        if (teilerWhitelist == null){
+
+            TeilerWhitelistReader teilerWhitelistReader = new TeilerWhitelistReader()
+            teilerWhitelist = teilerWhitelistReader.getTeilerWhiteList()
+
+        }
+
+        return teilerWhitelist.contains(teilerId.toLowerCase())
+
     }
 
 }

@@ -6,7 +6,7 @@ class HttpProxyUtils{
 
 
     public static void getSomething(){
-        HttpConnector
+
     }
 
     public static HttpHost getHttpHost(){

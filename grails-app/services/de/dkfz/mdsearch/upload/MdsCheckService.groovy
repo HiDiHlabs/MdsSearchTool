@@ -49,8 +49,8 @@ class MdsCheckService {
 
 
 
-    final String[] NAMESPACE = ["dktk", "adt", "marker"]
-    //TODO(David): add list of namespaces: adt, dktk, marker
+    final String[] NAMESPACE = ["dktk", "marker"]
+
     final String URN_ATTRIBUTE_AGE_PREFIX = "urn_dktk_dataelement_1"
     final String URN_ATTRIBUTE_SEX_PREFIX = "urn_dktk_dataelement_28"
 
@@ -92,19 +92,28 @@ class MdsCheckService {
 
 
     private Attribute createAttributeId(String key, String name, String description, EntityType ent) {
-        Attribute attribute = Attribute.findByKey(key)
-        if (!attribute) {
-            attribute = new Attribute()
-            attribute.setType(ValueType.STRING)
-            attribute.setDescription(description)
-            attribute.setName(name)
-            attribute.setKey(key)
-            attribute.setEntityType(ent)
-            attribute.setGroupable(false)
-            attribute.setNullable(false)
-            attribute.setKeyVersion("1")
-            return metaDataService.createOrUpdateAttribute(attribute)
+        Attribute attribute = null
+
+        if (key != null && name != null && ent != null){
+
+            attribute = Attribute.findByKey(key)
+
+            if (!attribute) {
+
+                attribute = new Attribute()
+                attribute.setType(ValueType.STRING)
+                attribute.setDescription(description)
+                attribute.setName(name)
+                attribute.setKey(key)
+                attribute.setEntityType(ent)
+                attribute.setGroupable(false)
+                attribute.setNullable(false)
+                attribute.setKeyVersion("1")
+                return metaDataService.createOrUpdateAttribute(attribute)
+            }
+
         }
+
         return attribute
     }
 
